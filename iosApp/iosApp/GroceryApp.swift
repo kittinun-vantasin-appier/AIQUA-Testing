@@ -2,7 +2,7 @@ import SwiftUI
 import SharedLogic
 
 @main
-struct IOSApp: App {
+struct Application: App {
     /// One per process, so the in-memory Cart lives as long as the app does.
     private let container = AppContainer(platformContext: PlatformContext())
 

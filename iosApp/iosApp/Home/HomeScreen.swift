@@ -109,7 +109,7 @@ private struct ProductCard: View {
                 )
                 .padding(6)
             }
-            .aspectRatio(1, contentMode: .fit)
+            .aspectRatio(1.25, contentMode: .fit) // wider than tall keeps tiles compact
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(row.product.name)
