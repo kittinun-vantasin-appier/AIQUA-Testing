@@ -1,0 +1,6 @@
+# Kotlin bindings for the AIQUA iOS SDK's Objective-C API (QGSdk, ...).
+# Only the headers are used here; the iOS app links the binary via Swift Package Manager (AppierFramework).
+language = Objective-C
+modules = Appier
+package = com.appier.ios
+compilerOpts = -fmodules

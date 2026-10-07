@@ -1,6 +1,15 @@
 {
-  "originHash" : "609133b310e9c4579a1d75e9696445b51bd516493282d44ac82bc290103e37c2",
+  "originHash" : "85282a55e4e26c16899e2979f99b04bf6fddceedbd3c87db047fb857d7a1ebda",
   "pins" : [
+    {
+      "identity" : "appier-ios-framework",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/appier/appier-ios-framework",
+      "state" : {
+        "revision" : "c3b0c24aa4a3653af163e8abbb7ad820e8370394",
+        "version" : "8.11.3"
+      }
+    },
     {
       "identity" : "kmp-nativecoroutines",
       "kind" : "remoteSourceControl",

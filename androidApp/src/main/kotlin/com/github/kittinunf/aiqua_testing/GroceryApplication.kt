@@ -1,8 +1,13 @@
 package com.github.kittinunf.aiqua_testing
 
 import android.app.Application
+import com.github.kittinunf.aiqua_testing.aiqua.Aiqua
 
 class GroceryApplication : Application() {
-    /** One per process, so the in-memory Cart survives rotation but not the app being killed. */
-    val container: AppContainer by lazy { AppContainer(PlatformContext(this)) }
+    val container: AppContainer by lazy { AppContainer() }
+
+    override fun onCreate() {
+        super.onCreate()
+        Aiqua.init(application = this)
+    }
 }

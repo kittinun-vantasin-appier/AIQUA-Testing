@@ -3,8 +3,11 @@ import SharedLogic
 
 @main
 struct Application: App {
-    /// One per process, so the in-memory Cart lives as long as the app does.
-    private let container = AppContainer(platformContext: PlatformContext())
+    private let container: AppContainer = AppContainer()
+
+    init() {
+        Aiqua.shared.configure()
+    }
 
     var body: some Scene {
         WindowGroup {

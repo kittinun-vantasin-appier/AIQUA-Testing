@@ -1,5 +1,7 @@
 [versions]
 agp = "9.1.1"
+appier-android = "8.11.0"
+appier-ios = "8.11.3"
 android-compileSdk = "37"
 android-minSdk = "28"
 android-targetSdk = "37"
@@ -19,6 +21,7 @@ moko-resources = "0.27.1"
 nativecoroutines = "1.0.6"
 
 [libraries]
+appier-android = { module = "com.appier:appier-android", version.ref = "appier-android" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }

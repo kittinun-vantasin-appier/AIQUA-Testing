@@ -45,9 +45,10 @@ That's where the screen context is.
 ### Services (stateless)
 
 - **`CatalogService`** / `JsonCatalogService`: fetches the Products from `product.json` after 500 ms of fake latency.
-  The JSON is a moko-resources file (`MR.files.product_json`). Reading it is the only platform-specific bit
-  (`PlatformContext.readProductJson()`): Android needs the app's `Context`, so `GroceryApplication` creates
-  `AppContainer(PlatformContext(this))`, while iOS uses `AppContainer(platformContext: PlatformContext())`.
+  The JSON is a moko-resources file (`MR.files.product_json`), read inside `sharedLogic` by `readProductJson()`:
+  iOS reads it from the bundle; Android needs a `Context`, which sharedLogic captures itself at process start with a
+  tiny internal `AppContextProvider` (a `ContentProvider` declared in its manifest). So both apps just call
+  `AppContainer()`.
 - **`OrderService`** / `FakeOrderService`: places an Order after 2 s of fake latency with an Order ID such as
   `ORD-482913`. **Every 5th attempt (5th, 10th, … in each app run) throws `OrderFailedException`**, so a failure can be
   reproduced on demand. The attempt counter simulates the backend, not app state.
@@ -119,6 +120,23 @@ in `com.github.kittinunf.aiqua_testing.resources` and builds native resources fo
 | Packaging | Android resources in the library, merged into the APK | resource bundle copied into the app by the "Copy Kotlin Framework Resources" build phase (the framework is static) |
 
 Only `moko:resources` is exported to Swift, not `moko:graphics`: its `Color` class would clash with SwiftUI's `Color`.
+
+## AIQUA SDK
+
+`Aiqua` is an `expect object` in `sharedLogic` (`aiqua/`) with one `actual object` per platform over the native SDK.
+The common declaration holds what both platforms share; each platform adds its own `init`, because Android needs the
+`Application` and iOS doesn't. Each app calls it at launch: `Aiqua.init(application = this)` in
+`GroceryApplication.onCreate`, `Aiqua.shared.configure()` in the iOS `App`'s `init` (`init` is reserved in Swift).
+The app ID is `Constants.APP_ID`. `AppContainer` doesn't touch the SDK.
+
+| | Android | iOS |
+|---|---|---|
+| SDK | `com.appier:appier-android` as a `sharedLogic` androidMain dependency | `AppierFramework` (Swift Package Manager) linked by the iOS app |
+| Kotlin calls | `QG.initializeSdk(application, appId)`; verbose SDK logs in debug builds | `QGSdk.getSharedInstance().onStart(appId)` through Kotlin bindings generated from the SDK's Objective-C headers (`appier.def`; Gradle downloads the headers of the same version) |
+| Version pin | `appier-android` in `libs.versions.toml` | `appier-ios` in `libs.versions.toml` **and** the Swift package's exact version in Xcode: keep them equal |
+
+Firebase isn't set up yet: Android logs a warning and push won't work, but the SDK starts. No custom events are sent yet;
+when they are, they come from ViewModels ([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)).
 
 ## Platform glue
 

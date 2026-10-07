@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DBC9D1796D4203B1B992AB1F /* AppierFramework in Frameworks */ = {isa = PBXBuildFile; productRef = 7B32D37540360D07A1335E8A /* AppierFramework */; };
 		EFA2B9E94C6027A9AD9C2085 /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 728DD64DBD647AF66EA95F30 /* KMPNativeCoroutinesAsync */; };
 /* End PBXBuildFile section */
 
@@ -53,6 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBC9D1796D4203B1B992AB1F /* AppierFramework in Frameworks */,
 				EFA2B9E94C6027A9AD9C2085 /* KMPNativeCoroutinesAsync in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,6 +101,7 @@
 			);
 			name = iosApp;
 			packageProductDependencies = (
+				7B32D37540360D07A1335E8A /* AppierFramework */,
 				728DD64DBD647AF66EA95F30 /* KMPNativeCoroutinesAsync */,
 			);
 			productName = iosApp;
@@ -130,6 +133,7 @@
 			mainGroup = 90F12E248D1CB85FD11C22F3;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				BFA8F827E0103C1879B87226 /* XCRemoteSwiftPackageReference "appier-ios-framework" */,
 				0F9B2189E8C48ED6B26CD3BE /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -415,6 +419,14 @@
 				version = "1.0.6-spm-async";
 			};
 		};
+		BFA8F827E0103C1879B87226 /* XCRemoteSwiftPackageReference "appier-ios-framework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/appier/appier-ios-framework";
+			requirement = {
+				kind = exactVersion;
+				version = 8.11.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -422,6 +434,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0F9B2189E8C48ED6B26CD3BE /* XCRemoteSwiftPackageReference "KMP-NativeCoroutines" */;
 			productName = KMPNativeCoroutinesAsync;
+		};
+		7B32D37540360D07A1335E8A /* AppierFramework */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BFA8F827E0103C1879B87226 /* XCRemoteSwiftPackageReference "appier-ios-framework" */;
+			productName = AppierFramework;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

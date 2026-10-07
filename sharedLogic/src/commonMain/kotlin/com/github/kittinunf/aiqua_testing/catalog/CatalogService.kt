@@ -21,11 +21,12 @@ class JsonCatalogService(
 ) : CatalogService {
     override suspend fun fetchProducts(): List<Product> {
         delay(latency)
-        return withContext(Dispatchers.Default) { parseProducts(readJson()) }
+        return withContext(Dispatchers.Default) { parseProducts(Json { ignoreUnknownKeys = true },readJson()) }
     }
 }
 
-private val json = Json { ignoreUnknownKeys = true }
-
 /** `product.json` is a bare array of Products. */
-fun parseProducts(text: String): List<Product> = json.decodeFromString(text)
+internal fun parseProducts(json: Json, text: String): List<Product> = json.decodeFromString(text)
+
+/** Reads the bundled `product.json` (moko-resources `MR.files.product_json`) on this platform. */
+internal expect fun readProductJson(): String

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application>
+        <!-- Gives shared code the app's Context for reading bundled resources (see AppContextProvider). -->
+        <provider
+            android:name="com.github.kittinunf.aiqua_testing.AppContextProvider"
+            android:authorities="${applicationId}.AppContextProvider"
+            android:exported="false" />
+    </application>
+</manifest>

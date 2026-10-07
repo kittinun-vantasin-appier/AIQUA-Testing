@@ -2,24 +2,18 @@ package com.github.kittinunf.aiqua_testing.home
 
 import com.github.kittinunf.aiqua_testing.cart.Cart
 import com.github.kittinunf.aiqua_testing.cart.CartLine
-import com.github.kittinunf.aiqua_testing.catalog.parseProducts
+import com.github.kittinunf.aiqua_testing.catalog.Product
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SectionsTest {
+    private val carrot = Product("carrot", "Carrot", "vegetables", "🥕", 98)
+    private val porkBelly = Product("pork-belly", "Pork Belly", "meat", "🥓", 580)
+    private val cabbage = Product("cabbage", "Cabbage", "vegetables", "🥬", 178)
+
     @Test
     fun sortsCategoriesAndProductsAlphabeticallyWithUppercaseHeaders() {
-        val products = parseProducts(
-            """
-            [
-              { "id": "carrot", "name": "Carrot", "category": "vegetables", "emoji": "🥕", "price": 98 },
-              { "id": "pork-belly", "name": "Pork Belly", "category": "meat", "emoji": "🥓", "price": 580 },
-              { "id": "cabbage", "name": "Cabbage", "category": "vegetables", "emoji": "🥬", "price": 178 }
-            ]
-            """,
-        )
-
-        val sections = sections(products, Cart(listOf(CartLine(products[0], 1))))
+        val sections = sections(listOf(carrot, porkBelly, cabbage), Cart(listOf(CartLine(carrot, 1))))
 
         assertEquals(listOf("MEAT", "VEGETABLES"), sections.map { it.title })
         assertEquals(listOf("Cabbage", "Carrot"), sections[1].rows.map { it.product.name })
