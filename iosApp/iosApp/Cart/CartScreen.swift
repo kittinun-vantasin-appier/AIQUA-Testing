@@ -24,6 +24,7 @@ struct CartScreen: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(MR.colors.shared.surface)) // same page background as Android, incl. dark mode
             .navigationTitle(Text(MR.strings.shared.cart_title))
             .safeAreaInset(edge: .bottom) {
                 if !store.state.isEmpty {
@@ -67,9 +68,9 @@ private struct CartLineItem: View {
                 HStack(spacing: 6) {
                     Text(line.totalText)
                         .fontWeight(.semibold)
-                        .foregroundStyle(Palette.primary)
+                        .foregroundStyle(Color(MR.colors.shared.primary))
                     Text(MR.strings.shared.price_each, line.unitPriceText)
-                        .foregroundStyle(Palette.onSurfaceVariant)
+                        .foregroundStyle(Color(MR.colors.shared.on_surface_variant))
                 }
                 .font(.subheadline)
             }
@@ -99,7 +100,7 @@ private struct EmptyCart: View {
             Button(action: onStartShopping) { Text(MR.strings.shared.start_shopping) }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
-                .tint(Palette.primary)
+                .tint(Color(MR.colors.shared.primary))
                 .padding(.top, 24)
         }
     }
@@ -119,15 +120,15 @@ private struct CheckoutBar: View {
             Button(action: onBuy) {
                 Text(MR.strings.shared.buy)
                     .font(.headline)
-                    .foregroundStyle(Palette.onPrimary)
+                    .foregroundStyle(Color(MR.colors.shared.on_primary))
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(Palette.primary, in: Capsule())
+                    .background(Color(MR.colors.shared.primary), in: Capsule())
             }
             .buttonStyle(.plain)
         }
         .padding(16)
-        .background(Palette.surfaceContainer)
+        .background(Color(MR.colors.shared.surface_container))
     }
 }
 
@@ -151,13 +152,13 @@ private struct OrderOverlayView: View {
                     .padding(.top, 12)
                 Text(MR.strings.shared.order_failed_hint)
                     .font(.subheadline)
-                    .foregroundStyle(Palette.onSurfaceVariant)
+                    .foregroundStyle(Color(MR.colors.shared.on_surface_variant))
                     .multilineTextAlignment(.center)
                     .padding(.top, 8)
             } else {
                 ProgressView()
                     .controlSize(.large)
-                    .tint(Palette.primary)
+                    .tint(Color(MR.colors.shared.primary))
                 Text(MR.strings.shared.placing_order)
                     .font(.headline)
                     .padding(.top, 24)
@@ -165,7 +166,7 @@ private struct OrderOverlayView: View {
         }
         .padding(32)
         .frame(minWidth: 220)
-        .background(Palette.surfaceContainerHigh, in: RoundedRectangle(cornerRadius: 28))
+        .background(Color(MR.colors.shared.surface_container_high), in: RoundedRectangle(cornerRadius: 28))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

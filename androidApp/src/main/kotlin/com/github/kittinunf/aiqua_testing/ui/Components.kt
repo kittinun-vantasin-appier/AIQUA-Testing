@@ -14,6 +14,7 @@ import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import dev.icerock.moko.resources.StringResource
  * "+" when the Product isn't in the Cart, otherwise `− n +`.
  * At 1 the − becomes ✕, which removes the Cart Line.
  * It wraps its content unless [modifier] gives it a width, in which case the buttons spread to the edges.
+ * [compact] uses 32dp buttons (instead of Material's 48dp touch targets) so it fits a small tile.
  */
 @Composable
 fun QuantityStepper(
@@ -46,14 +48,21 @@ fun QuantityStepper(
     onDecrement: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
+    compact: Boolean = false,
 ) {
+    val buttonModifier = if (compact) Modifier.size(32.dp) else Modifier
     if (quantity == 0) {
-        FilledIconButton(onClick = onAdd, modifier = modifier) {
-            Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.add_to_cart))
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides if (compact) 0.dp else 48.dp) {
+            FilledIconButton(onClick = onAdd, modifier = modifier.then(buttonModifier)) {
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.add_to_cart))
+            }
         }
         return
     }
-    CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer) {
+    CompositionLocalProvider(
+        LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer,
+        LocalMinimumInteractiveComponentSize provides if (compact) 0.dp else 48.dp,
+    ) {
         Row(
             modifier = modifier
                 .clip(CircleShape)
@@ -62,7 +71,7 @@ fun QuantityStepper(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (quantity == 1) {
-                IconButton(onClick = onRemove) {
+                IconButton(onClick = onRemove, modifier = buttonModifier) {
                     Icon(
                         painterResource(R.drawable.ic_close),
                         contentDescription = stringResource(MR.strings.remove_from_cart),
@@ -70,7 +79,7 @@ fun QuantityStepper(
                     )
                 }
             } else {
-                IconButton(onClick = onDecrement) {
+                IconButton(onClick = onDecrement, modifier = buttonModifier) {
                     Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(MR.strings.decrease_quantity))
                 }
             }
@@ -80,7 +89,7 @@ fun QuantityStepper(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.widthIn(min = 16.dp),
             )
-            IconButton(onClick = onAdd, enabled = canAdd) {
+            IconButton(onClick = onAdd, enabled = canAdd, modifier = buttonModifier) {
                 Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.increase_quantity))
             }
         }

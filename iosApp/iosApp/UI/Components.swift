@@ -4,10 +4,12 @@ import SharedLogic
 /// "+" when the Product isn't in the Cart, otherwise `− n +`.
 /// At 1 the − becomes ✕, which removes the Cart Line.
 /// With `fillWidth` the buttons spread to the edges, otherwise it hugs its content.
+/// `compact` uses 32pt buttons so it fits a small tile.
 struct QuantityStepper: View {
     let quantity: Int32
     let canAdd: Bool
     var fillWidth = false
+    var compact = false
     let onAdd: () -> Void
     let onDecrement: () -> Void
     let onRemove: () -> Void
@@ -16,24 +18,24 @@ struct QuantityStepper: View {
         if quantity == 0 {
             Button(action: onAdd) {
                 Image(systemName: "plus")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(Palette.onPrimary)
-                    .frame(width: 40, height: 40)
-                    .background(Palette.primary, in: Circle())
+                    .font(.system(size: compact ? 14 : 18, weight: .semibold))
+                    .foregroundStyle(Color(MR.colors.shared.on_primary))
+                    .frame(width: height, height: height)
+                    .background(Color(MR.colors.shared.primary), in: Circle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(MR.strings.shared.add_to_cart))
         } else {
             HStack(spacing: 0) {
                 if quantity == 1 {
-                    stepButton("xmark", tint: Palette.error, label: MR.strings.shared.remove_from_cart, action: onRemove)
+                    stepButton("xmark", tint: Color(MR.colors.shared.error), label: MR.strings.shared.remove_from_cart, action: onRemove)
                 } else {
                     stepButton("minus", label: MR.strings.shared.decrease_quantity, action: onDecrement)
                 }
                 if fillWidth { Spacer(minLength: 0) }
                 Text("\(quantity)")
-                    .font(.headline)
-                    .foregroundStyle(Palette.onPrimaryContainer)
+                    .font(compact ? .subheadline.weight(.semibold) : .headline)
+                    .foregroundStyle(Color(MR.colors.shared.on_primary_container))
                     .frame(minWidth: 16)
                 if fillWidth { Spacer(minLength: 0) }
                 stepButton("plus", label: MR.strings.shared.increase_quantity, action: onAdd)
@@ -41,22 +43,24 @@ struct QuantityStepper: View {
                     .opacity(canAdd ? 1 : 0.38)
             }
             .frame(maxWidth: fillWidth ? .infinity : nil)
-            .frame(height: 40)
-            .background(Palette.primaryContainer, in: Capsule())
+            .frame(height: height)
+            .background(Color(MR.colors.shared.primary_container), in: Capsule())
         }
     }
 
+    private var height: CGFloat { compact ? 32 : 40 }
+
     private func stepButton(
         _ systemName: String,
-        tint: Color = Palette.onPrimaryContainer,
+        tint: Color = Color(MR.colors.shared.on_primary_container),
         label: SharedLogic.StringResource,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             Image(systemName: systemName)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: compact ? 13 : 16, weight: .semibold))
                 .foregroundStyle(tint)
-                .frame(width: 44, height: 40)
+                .frame(width: compact ? 32 : 44, height: height)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -71,7 +75,7 @@ struct ProductEmoji: View {
         Text(emoji)
             .font(.system(size: 26))
             .frame(width: 48, height: 48)
-            .background(Palette.surfaceContainerHigh, in: RoundedRectangle(cornerRadius: 12))
+            .background(Color(MR.colors.shared.surface_container_high), in: RoundedRectangle(cornerRadius: 12))
     }
 }
 

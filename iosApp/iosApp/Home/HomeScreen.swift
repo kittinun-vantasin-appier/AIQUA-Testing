@@ -16,6 +16,7 @@ struct HomeScreen: View {
         NavigationStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(MR.colors.shared.surface)) // same page background as Android, incl. dark mode
                 .navigationTitle(Text(MR.strings.shared.home_title))
         }
     }
@@ -25,14 +26,14 @@ struct HomeScreen: View {
     private var content: some View {
         let state = store.state
         if state.sections.isEmpty && state.isLoading {
-            ProgressView().controlSize(.large).tint(Palette.primary)
+            ProgressView().controlSize(.large).tint(Color(MR.colors.shared.primary))
         } else if state.sections.isEmpty && state.error != nil {
             VStack(spacing: 16) {
                 Text(MR.strings.shared.home_error)
                 Button { store.viewModel.onRetryClick() } label: { Text(MR.strings.shared.retry) }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
-                    .tint(Palette.primary)
+                    .tint(Color(MR.colors.shared.primary))
             }
         } else {
             catalog(state.sections)
@@ -45,7 +46,7 @@ struct HomeScreen: View {
                 ForEach(sections, id: \.title) { section in
                     Section {
                         LazyVGrid(
-                            columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)],
+                            columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3),
                             spacing: 16
                         ) {
                             ForEach(section.rows, id: \.product.id) { row in
@@ -73,16 +74,16 @@ private struct SectionHeader: View {
     var body: some View {
         Text(title)
             .font(.subheadline.weight(.semibold))
-            .foregroundStyle(Palette.primary)
+            .foregroundStyle(Color(MR.colors.shared.primary))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .padding(.vertical, 8)
-            .background(Palette.surfaceContainer)
+            .background(Color(MR.colors.shared.surface_container))
     }
 }
 
 /// Everything for one Product lives inside one card: the stepper floats over the top of the emoji,
-/// and the name and price sit in one row along the bottom.
+/// and the name and price sit along the bottom.
 private struct ProductCard: View {
     let row: ProductRow
     let onAdd: () -> Void
@@ -94,34 +95,35 @@ private struct ProductCard: View {
             // "+" sits in the corner; once in the Cart the stepper spans the top edge.
             ZStack(alignment: row.quantity == 0 ? .topTrailing : .top) {
                 Text(row.product.emoji)
-                    .font(.system(size: 64))
-                    .padding(.top, 24)
+                    .font(.system(size: 40))
+                    .padding(.top, 16)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 QuantityStepper(
                     quantity: row.quantity,
                     canAdd: row.canAdd,
                     fillWidth: row.quantity > 0,
+                    compact: true,
                     onAdd: onAdd,
                     onDecrement: onDecrement,
                     onRemove: onRemove
                 )
-                .padding(8)
+                .padding(6)
             }
             .aspectRatio(1, contentMode: .fit)
 
-            HStack(spacing: 8) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(row.product.name)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
-                Spacer(minLength: 0)
                 Text(row.priceText)
                     .fontWeight(.semibold)
-                    .foregroundStyle(Palette.primary)
+                    .foregroundStyle(Color(MR.colors.shared.primary))
             }
-            .font(.subheadline)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .font(.footnote)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
         }
-        .background(Palette.surfaceContainerHigh, in: RoundedRectangle(cornerRadius: 16))
+        .background(Color(MR.colors.shared.surface_container_high), in: RoundedRectangle(cornerRadius: 16))
     }
 }

@@ -45,8 +45,9 @@ That's where the screen context is.
 ### Services (stateless)
 
 - **`CatalogService`** / `JsonCatalogService`: fetches the Products from `product.json` after 500 ms of fake latency.
-  Reading the file is the only platform-specific bit (`expect fun readProductJson()`): Android reads it from the APK
-  classpath, and iOS reads it from the app bundle.
+  The JSON is a moko-resources file (`MR.files.product_json`). Reading it is the only platform-specific bit
+  (`PlatformContext.readProductJson()`): Android needs the app's `Context`, so `GroceryApplication` creates
+  `AppContainer(PlatformContext(this))`, while iOS uses `AppContainer(platformContext: PlatformContext())`.
 - **`OrderService`** / `FakeOrderService`: places an Order after 2 s of fake latency with an Order ID such as
   `ORD-482913`. **Every 5th attempt (5th, 10th, … in each app run) throws `OrderFailedException`**, so a failure can be
   reproduced on demand. The attempt counter simulates the backend, not app state.
@@ -104,6 +105,20 @@ t=4s   all three cleared                              ▶ overlay closes; Buy ag
 
 While any of the three is set, `CartUiState.isOrderOverlayVisible` is true and the overlay blocks all input
 (Android: a full-screen `Dialog`; iOS: a `fullScreenCover`).
+
+## Shared resources (moko-resources)
+
+All UI text, the colour palette (light and dark) and `product.json` live once in
+`sharedLogic/src/commonMain/moko-resources/` (`base/strings.xml`, `colors/colors.xml`, `files/`). moko generates `MR`
+in `com.github.kittinunf.aiqua_testing.resources` and builds native resources for each platform.
+
+| | Android | iOS |
+|---|---|---|
+| Text | `stringResource(MR.strings.x.resourceId)` | `Text(MR.strings.shared.x)` (helper in `SharedResources.swift`) |
+| Colour | `GroceryTheme` reads every role with `colorResource(...)` | `Color(MR.colors.shared.x)` |
+| Packaging | Android resources in the library, merged into the APK | resource bundle copied into the app by the "Copy Kotlin Framework Resources" build phase (the framework is static) |
+
+Only `moko:resources` is exported to Swift, not `moko:graphics`: its `Color` class would clash with SwiftUI's `Color`.
 
 ## Platform glue
 

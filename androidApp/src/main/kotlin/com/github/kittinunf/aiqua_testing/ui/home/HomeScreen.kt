@@ -41,7 +41,7 @@ import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
 import com.github.kittinunf.aiqua_testing.ui.ScreenTopBar
 import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 
-private const val COLUMNS = 2
+private const val COLUMNS = 3
 
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
@@ -89,7 +89,7 @@ private fun HomeContent(
                     items(section.rows.chunked(COLUMNS), key = { it.first().product.id }) { rows ->
                         Row(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             rows.forEach { row ->
                                 ProductCard(row, onAdd, onDecrement, onRemove, Modifier.weight(1f))
@@ -124,7 +124,7 @@ private fun ProductCard(
     modifier: Modifier = Modifier,
 ) {
     // Everything for one Product lives inside one card: the stepper floats over the top of the emoji,
-    // and the name and price sit in one row along the bottom.
+    // and the name and price sit along the bottom.
     Surface(
         shape = RoundedCornerShape(16.dp),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -134,8 +134,8 @@ private fun ProductCard(
             Box(Modifier.fillMaxWidth().aspectRatio(1f)) {
                 Text(
                     text = row.product.emoji,
-                    fontSize = 64.sp,
-                    modifier = Modifier.align(Alignment.Center).padding(top = 24.dp),
+                    fontSize = 40.sp,
+                    modifier = Modifier.align(Alignment.Center).padding(top = 16.dp),
                 )
                 QuantityStepper(
                     quantity = row.quantity,
@@ -145,31 +145,25 @@ private fun ProductCard(
                     onRemove = { onRemove(row.product) },
                     // "+" sits in the corner; once in the Cart the stepper spans the top edge.
                     modifier = if (row.quantity == 0) {
-                        Modifier.align(Alignment.TopEnd).padding(8.dp)
+                        Modifier.align(Alignment.TopEnd).padding(6.dp)
                     } else {
-                        Modifier.align(Alignment.TopCenter).padding(8.dp).fillMaxWidth().height(40.dp)
+                        Modifier.align(Alignment.TopCenter).padding(6.dp).fillMaxWidth().height(32.dp)
                     },
+                    compact = true,
                 )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp)) {
                 Text(
                     text = row.product.name,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
                 )
                 Text(
                     text = row.priceText,
-                    style = MaterialTheme.typography.titleSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.SemiBold,
-                    modifier = Modifier.padding(start = 8.dp),
                 )
             }
         }

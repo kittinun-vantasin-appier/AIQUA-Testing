@@ -1,8 +1,20 @@
 import SwiftUI
 import SharedLogic
 
+@main
+struct IOSApp: App {
+    /// One per process, so the in-memory Cart lives as long as the app does.
+    private let container = AppContainer(platformContext: PlatformContext())
+
+    var body: some Scene {
+        WindowGroup {
+            AppView(container: container)
+        }
+    }
+}
+
 /// Two tabs, Home and Cart, with the Cart tab badge showing the total units in the Cart.
-struct GroceryApp: View {
+struct AppView: View {
     let container: AppContainer
 
     private enum Tab { case home, cart }
@@ -29,6 +41,6 @@ struct GroceryApp: View {
                 .badge(store.state.cartBadgeText.map { Text($0) })
                 .tag(Tab.cart)
         }
-        .tint(Palette.primary)
+        .tint(Color(MR.colors.shared.primary))
     }
 }

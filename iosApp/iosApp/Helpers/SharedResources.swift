@@ -17,15 +17,3 @@ extension Color {
         self.init(uiColor: resource.getUIColor())
     }
 }
-
-/// Short names for the shared palette colors the screens use.
-enum Palette {
-    static let primary = Color(MR.colors.shared.primary)
-    static let onPrimary = Color(MR.colors.shared.on_primary)
-    static let primaryContainer = Color(MR.colors.shared.primary_container)
-    static let onPrimaryContainer = Color(MR.colors.shared.on_primary_container)
-    static let error = Color(MR.colors.shared.error)
-    static let surfaceContainer = Color(MR.colors.shared.surface_container)
-    static let surfaceContainerHigh = Color(MR.colors.shared.surface_container_high)
-    static let onSurfaceVariant = Color(MR.colors.shared.on_surface_variant)
-}

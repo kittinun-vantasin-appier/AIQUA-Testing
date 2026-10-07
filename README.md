@@ -6,11 +6,12 @@ flows through the app, and [docs/adr](./docs/adr) for key decisions.
 * [/androidApp](./androidApp/src/main/kotlin) is the Android app: Jetpack Compose UI with Navigation 3.
 
 * [/iosApp](./iosApp/iosApp) is the iOS app: SwiftUI with the same screens, observing the shared ViewModels through
-  the KMPNativeCoroutinesAsync Swift package. `product.json` is copied into the app bundle by Xcode.
+  the KMPNativeCoroutinesAsync Swift package. A build phase copies the shared moko-resources bundle into the app.
 
 * [/sharedLogic](./sharedLogic/src) holds everything shared by both apps: Services, Repositories
   and the screen ViewModels (exposed to Swift through KMP-NativeCoroutines).
-  The catalog data lives in [product.json](./sharedLogic/src/commonMain/resources/product.json).
+  Shared text, colours and the catalog ([product.json](./sharedLogic/src/commonMain/moko-resources/files/product.json))
+  live in [moko-resources](./sharedLogic/src/commonMain/moko-resources).
 
 ### Running the apps
 
