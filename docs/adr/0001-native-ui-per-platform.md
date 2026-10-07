@@ -1,0 +1,3 @@
+# Native UI per platform; only logic is shared
+
+The UI is written natively on each platform: Jetpack Compose in `androidApp` and SwiftUI in `iosApp`. Only non-UI logic is shared, through the `sharedLogic` Kotlin Multiplatform module. We chose this over Compose Multiplatform on iOS because the app is a host for testing the AIQUA SDK, and the iOS side should be a genuine native app, built the way real AIQUA customers build theirs. For the same reason, the template's `sharedUI` (Compose Multiplatform) module was removed. Android was built first. iOS has the same features and screens, built on the same `sharedLogic`.

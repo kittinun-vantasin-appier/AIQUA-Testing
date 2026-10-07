@@ -1,0 +1,6 @@
+<resources>
+    <!-- Only what shows before Compose draws: the window and launch screen background. -->
+    <style name="Theme.Grocery" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>

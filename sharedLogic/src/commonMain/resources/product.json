@@ -1,0 +1,43 @@
+[
+  { "id": "apple", "name": "Apple", "category": "fruits", "emoji": "🍎", "price": 198 },
+  { "id": "banana", "name": "Banana", "category": "fruits", "emoji": "🍌", "price": 158 },
+  { "id": "cherries", "name": "Cherries", "category": "fruits", "emoji": "🍒", "price": 980 },
+  { "id": "grapes", "name": "Grapes", "category": "fruits", "emoji": "🍇", "price": 698 },
+  { "id": "lemon", "name": "Lemon", "category": "fruits", "emoji": "🍋", "price": 128 },
+  { "id": "orange", "name": "Orange", "category": "fruits", "emoji": "🍊", "price": 148 },
+  { "id": "peach", "name": "Peach", "category": "fruits", "emoji": "🍑", "price": 398 },
+  { "id": "strawberries", "name": "Strawberries", "category": "fruits", "emoji": "🍓", "price": 598 },
+  { "id": "watermelon", "name": "Watermelon", "category": "fruits", "emoji": "🍉", "price": 1280 },
+
+  { "id": "bell-pepper", "name": "Bell Pepper", "category": "vegetables", "emoji": "🫑", "price": 88 },
+  { "id": "broccoli", "name": "Broccoli", "category": "vegetables", "emoji": "🥦", "price": 198 },
+  { "id": "cabbage", "name": "Cabbage", "category": "vegetables", "emoji": "🥬", "price": 178 },
+  { "id": "carrot", "name": "Carrot", "category": "vegetables", "emoji": "🥕", "price": 98 },
+  { "id": "corn", "name": "Corn", "category": "vegetables", "emoji": "🌽", "price": 158 },
+  { "id": "cucumber", "name": "Cucumber", "category": "vegetables", "emoji": "🥒", "price": 68 },
+  { "id": "eggplant", "name": "Eggplant", "category": "vegetables", "emoji": "🍆", "price": 98 },
+  { "id": "onion", "name": "Onion", "category": "vegetables", "emoji": "🧅", "price": 78 },
+  { "id": "potato", "name": "Potato", "category": "vegetables", "emoji": "🥔", "price": 128 },
+  { "id": "tomato", "name": "Tomato", "category": "vegetables", "emoji": "🍅", "price": 148 },
+
+  { "id": "beef-steak", "name": "Beef Steak", "category": "meat", "emoji": "🥩", "price": 1980 },
+  { "id": "chicken-thigh", "name": "Chicken Thigh", "category": "meat", "emoji": "🍗", "price": 398 },
+  { "id": "chicken-wings", "name": "Chicken Wings", "category": "meat", "emoji": "🍗", "price": 348 },
+  { "id": "lamb-chops", "name": "Lamb Chops", "category": "meat", "emoji": "🍖", "price": 1480 },
+  { "id": "pork-belly", "name": "Pork Belly", "category": "meat", "emoji": "🥓", "price": 580 },
+  { "id": "sausages", "name": "Sausages", "category": "meat", "emoji": "🌭", "price": 398 },
+
+  { "id": "crab", "name": "Crab", "category": "seafood", "emoji": "🦀", "price": 1980 },
+  { "id": "lobster", "name": "Lobster", "category": "seafood", "emoji": "🦞", "price": 3980 },
+  { "id": "oysters", "name": "Oysters", "category": "seafood", "emoji": "🦪", "price": 1280 },
+  { "id": "salmon", "name": "Salmon Fillet", "category": "seafood", "emoji": "🐟", "price": 680 },
+  { "id": "shrimp", "name": "Shrimp", "category": "seafood", "emoji": "🦐", "price": 798 },
+  { "id": "squid", "name": "Squid", "category": "seafood", "emoji": "🦑", "price": 498 },
+  { "id": "tuna", "name": "Tuna Sashimi", "category": "seafood", "emoji": "🍣", "price": 980 },
+
+  { "id": "butter", "name": "Butter", "category": "dairy & eggs", "emoji": "🧈", "price": 458 },
+  { "id": "cheese", "name": "Cheese", "category": "dairy & eggs", "emoji": "🧀", "price": 498 },
+  { "id": "eggs", "name": "Eggs (10 pack)", "category": "dairy & eggs", "emoji": "🥚", "price": 298 },
+  { "id": "ice-cream", "name": "Ice Cream", "category": "dairy & eggs", "emoji": "🍨", "price": 298 },
+  { "id": "milk", "name": "Milk", "category": "dairy & eggs", "emoji": "🥛", "price": 228 }
+]
