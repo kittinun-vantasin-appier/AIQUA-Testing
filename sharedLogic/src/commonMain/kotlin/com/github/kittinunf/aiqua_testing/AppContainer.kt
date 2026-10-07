@@ -16,8 +16,11 @@ import com.github.kittinunf.aiqua_testing.order.OrderService
  * and the ViewModels that use the Repositories. Android keeps one in its Application, and iOS keeps one in its App.
  */
 class AppContainer(catalogService: CatalogService, orderService: OrderService) {
-    // A real no-arg constructor (not default arguments) so Swift can call `AppContainer()` too.
-    constructor() : this(JsonCatalogService(), FakeOrderService())
+    /** The real app setup: the Catalog comes from the bundled `product.json`, Orders from the fake backend. */
+    constructor(platformContext: PlatformContext) : this(
+        JsonCatalogService(readJson = { platformContext.readProductJson() }),
+        FakeOrderService(),
+    )
 
     private val homeRepository: HomeRepository = DefaultHomeRepository(catalogService)
     private val cartRepository: CartRepository = DefaultCartRepository(orderService)

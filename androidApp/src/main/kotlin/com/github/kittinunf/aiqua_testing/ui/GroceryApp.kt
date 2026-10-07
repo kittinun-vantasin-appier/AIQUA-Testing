@@ -27,9 +27,11 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.github.kittinunf.aiqua_testing.AppContainer
 import com.github.kittinunf.aiqua_testing.R
+import com.github.kittinunf.aiqua_testing.resources.*
 import com.github.kittinunf.aiqua_testing.ui.cart.CartScreen
 import com.github.kittinunf.aiqua_testing.ui.home.HomeScreen
 import com.github.kittinunf.aiqua_testing.ui.theme.GroceryTheme
+import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -58,7 +60,7 @@ fun GroceryApp(container: AppContainer) {
                         selected = current == HomeRoute,
                         onClick = goHome,
                         icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = null) },
-                        label = { Text(stringResource(R.string.tab_home)) },
+                        label = { Text(stringResource(MR.strings.tab_home)) },
                     )
                     NavigationBarItem(
                         selected = current == CartRoute,
@@ -68,7 +70,7 @@ fun GroceryApp(container: AppContainer) {
                                 Icon(painterResource(R.drawable.ic_cart), contentDescription = null)
                             }
                         },
-                        label = { Text(stringResource(R.string.tab_cart)) },
+                        label = { Text(stringResource(MR.strings.tab_cart)) },
                     )
                 }
             },

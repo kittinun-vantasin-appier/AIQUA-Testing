@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		EFA2B9E94C6027A9AD9C2085 /* KMPNativeCoroutinesAsync in Frameworks */ = {isa = PBXBuildFile; productRef = 728DD64DBD647AF66EA95F30 /* KMPNativeCoroutinesAsync */; };
-		EFC9F80C1B270E99BB966E95 /* product.json in Resources */ = {isa = PBXBuildFile; fileRef = 99BA8D36670F8FBFEE3D2AF0 /* product.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3538B7A424A35066BDF7FC65 /* AIQUATesting.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIQUATesting.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		99BA8D36670F8FBFEE3D2AF0 /* product.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = product.json; path = ../sharedLogic/src/commonMain/resources/product.json; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -67,7 +65,6 @@
 			children = (
 				64FCD8ADEB27E4E03B28073A /* Configuration */,
 				163468C9696486A73C023A1E /* iosApp */,
-				99BA8D36670F8FBFEE3D2AF0 /* product.json */,
 				F140E3AE5868A720E0FAC193 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -91,6 +88,7 @@
 				073600D79D3A43C854B6BA91 /* Sources */,
 				07EA75B4C0D9DA12D72DFC4A /* Frameworks */,
 				16D20F7746162417034EFCF5 /* Resources */,
+				5864A0A42960798B9569121C /* Copy Kotlin Framework Resources */,
 			);
 			buildRules = (
 			);
@@ -149,7 +147,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EFC9F80C1B270E99BB966E95 /* product.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +171,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :sharedLogic:embedAndSignAppleFrameworkForXcode\n";
+		};
+		5864A0A42960798B9569121C /* Copy Kotlin Framework Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Kotlin Framework Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  exit 0\nfi\n# The Kotlin framework is static, so its moko-resources bundle (strings, colors, product.json) is copied here.\ncd \"$SRCROOT/..\"\n./gradlew :sharedLogic:copyFrameworkResourcesToApp \\\n    -Pmoko.resources.PLATFORM_NAME=\"$PLATFORM_NAME\" \\\n    -Pmoko.resources.CONFIGURATION=\"${KOTLIN_FRAMEWORK_BUILD_TYPE:-$CONFIGURATION}\" \\\n    -Pmoko.resources.ARCHS=\"$ARCHS\" \\\n    -Pmoko.resources.BUILT_PRODUCTS_DIR=\"$BUILT_PRODUCTS_DIR\" \\\n    -Pmoko.resources.CONTENTS_FOLDER_PATH=\"$CONTENTS_FOLDER_PATH\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

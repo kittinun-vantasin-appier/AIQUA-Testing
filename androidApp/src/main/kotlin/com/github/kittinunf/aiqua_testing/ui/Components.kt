@@ -1,5 +1,6 @@
 package com.github.kittinunf.aiqua_testing.ui
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,12 +9,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -25,6 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.kittinunf.aiqua_testing.R
+import com.github.kittinunf.aiqua_testing.resources.*
+import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
+import dev.icerock.moko.resources.StringResource
 
 /**
  * "+" when the Product isn't in the Cart, otherwise `− n +`.
@@ -42,7 +49,7 @@ fun QuantityStepper(
 ) {
     if (quantity == 0) {
         FilledIconButton(onClick = onAdd, modifier = modifier) {
-            Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_to_cart))
+            Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.add_to_cart))
         }
         return
     }
@@ -58,13 +65,13 @@ fun QuantityStepper(
                 IconButton(onClick = onRemove) {
                     Icon(
                         painterResource(R.drawable.ic_close),
-                        contentDescription = stringResource(R.string.remove_from_cart),
+                        contentDescription = stringResource(MR.strings.remove_from_cart),
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }
             } else {
                 IconButton(onClick = onDecrement) {
-                    Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.decrease_quantity))
+                    Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(MR.strings.decrease_quantity))
                 }
             }
             Text(
@@ -74,7 +81,7 @@ fun QuantityStepper(
                 modifier = Modifier.widthIn(min = 16.dp),
             )
             IconButton(onClick = onAdd, enabled = canAdd) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.increase_quantity))
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.increase_quantity))
             }
         }
     }
@@ -91,4 +98,10 @@ fun ProductEmoji(emoji: String, modifier: Modifier = Modifier) {
     ) {
         Text(emoji, fontSize = 26.sp)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScreenTopBar(resource: StringResource) {
+    TopAppBar(title = { Text(stringResource(resource), style = MaterialTheme.typography.displaySmall) })
 }

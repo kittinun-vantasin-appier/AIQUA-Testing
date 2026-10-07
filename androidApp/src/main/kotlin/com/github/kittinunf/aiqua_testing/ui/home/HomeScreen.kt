@@ -32,11 +32,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.kittinunf.aiqua_testing.R
+import com.github.kittinunf.aiqua_testing.resources.*
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.home.HomeUiState
 import com.github.kittinunf.aiqua_testing.home.HomeViewModel
 import com.github.kittinunf.aiqua_testing.home.ProductRow
 import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
+import com.github.kittinunf.aiqua_testing.ui.ScreenTopBar
+import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 
 private const val COLUMNS = 2
 
@@ -52,7 +55,6 @@ fun HomeScreen(viewModel: HomeViewModel) {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeContent(
     state: HomeUiState,
@@ -61,7 +63,7 @@ private fun HomeContent(
     onDecrement: (Product) -> Unit,
     onRemove: (Product) -> Unit,
 ) {
-    Scaffold(topBar = { TopAppBar(title = { Text(stringResource(R.string.home_title)) }) }) { padding ->
+    Scaffold(topBar = { ScreenTopBar(MR.strings.home_title) }) { padding ->
         val modifier = Modifier.fillMaxSize().padding(padding)
         // Content wins: once there are sections, keep showing them whatever else is going on.
         when {
@@ -74,9 +76,9 @@ private fun HomeContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(stringResource(R.string.home_error), style = MaterialTheme.typography.bodyLarge)
+                Text(stringResource(MR.strings.home_error), style = MaterialTheme.typography.bodyLarge)
                 Button(onClick = onRetry, modifier = Modifier.padding(top = 16.dp)) {
-                    Text(stringResource(R.string.retry))
+                    Text(stringResource(MR.strings.retry))
                 }
             }
 

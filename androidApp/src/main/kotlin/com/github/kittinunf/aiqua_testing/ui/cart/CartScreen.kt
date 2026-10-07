@@ -35,12 +35,15 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.kittinunf.aiqua_testing.R
+import com.github.kittinunf.aiqua_testing.resources.*
 import com.github.kittinunf.aiqua_testing.cart.CartLineRow
 import com.github.kittinunf.aiqua_testing.cart.CartUiState
 import com.github.kittinunf.aiqua_testing.cart.CartViewModel
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.ui.ProductEmoji
 import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
+import com.github.kittinunf.aiqua_testing.ui.ScreenTopBar
+import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 
 @Composable
 fun CartScreen(viewModel: CartViewModel, onStartShopping: () -> Unit) {
@@ -56,7 +59,6 @@ fun CartScreen(viewModel: CartViewModel, onStartShopping: () -> Unit) {
     if (state.isOrderOverlayVisible) OrderOverlayDialog(state)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CartContent(
     state: CartUiState,
@@ -67,7 +69,7 @@ private fun CartContent(
     onBuy: () -> Unit,
 ) {
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.cart_title)) }) },
+        topBar = { ScreenTopBar(MR.strings.cart_title) },
         bottomBar = { if (!state.isEmpty) CheckoutBar(state.totalText, onBuy) },
     ) { padding ->
         val modifier = Modifier.fillMaxSize().padding(padding)
@@ -92,12 +94,12 @@ private fun EmptyCart(onStartShopping: () -> Unit, modifier: Modifier = Modifier
     ) {
         Text("🛒", fontSize = 64.sp)
         Text(
-            text = stringResource(R.string.cart_empty),
+            text = stringResource(MR.strings.cart_empty),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(top = 16.dp),
         )
         Button(onClick = onStartShopping, modifier = Modifier.padding(top = 24.dp)) {
-            Text(stringResource(R.string.start_shopping))
+            Text(stringResource(MR.strings.start_shopping))
         }
     }
 }
@@ -116,7 +118,7 @@ private fun CartLineItem(
             Row {
                 Text(line.totalText, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                 Text(
-                    text = "  " + stringResource(R.string.price_each, line.unitPriceText),
+                    text = "  " + stringResource(MR.strings.price_each.resourceId, line.unitPriceText),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -138,7 +140,7 @@ private fun CheckoutBar(totalText: String, onBuy: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
         Column(Modifier.fillMaxWidth().padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(R.string.total), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(MR.strings.total), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.weight(1f))
                 Text(totalText, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             }
@@ -146,7 +148,7 @@ private fun CheckoutBar(totalText: String, onBuy: () -> Unit) {
                 onClick = onBuy,
                 modifier = Modifier.fillMaxWidth().padding(top = 12.dp).height(56.dp),
             ) {
-                Text(stringResource(R.string.buy), style = MaterialTheme.typography.titleMedium)
+                Text(stringResource(MR.strings.buy), style = MaterialTheme.typography.titleMedium)
             }
         }
     }
@@ -177,7 +179,7 @@ private fun OrderOverlayDialog(state: CartUiState) {
                             state.isPlacingOrder -> {
                                 CircularProgressIndicator()
                                 Text(
-                                    text = stringResource(R.string.placing_order),
+                                    text = stringResource(MR.strings.placing_order),
                                     style = MaterialTheme.typography.titleMedium,
                                     modifier = Modifier.padding(top = 24.dp),
                                 )
@@ -186,7 +188,7 @@ private fun OrderOverlayDialog(state: CartUiState) {
                             placedTotalText != null -> {
                                 Text("✅", fontSize = 56.sp)
                                 Text(
-                                    text = stringResource(R.string.order_placed),
+                                    text = stringResource(MR.strings.order_placed),
                                     style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier.padding(top = 12.dp),
                                 )
@@ -201,12 +203,12 @@ private fun OrderOverlayDialog(state: CartUiState) {
                             state.orderError != null -> {
                                 Text("❌", fontSize = 56.sp)
                                 Text(
-                                    text = stringResource(R.string.order_failed),
+                                    text = stringResource(MR.strings.order_failed),
                                     style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier.padding(top = 12.dp),
                                 )
                                 Text(
-                                    text = stringResource(R.string.order_failed_hint),
+                                    text = stringResource(MR.strings.order_failed_hint),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(top = 8.dp),

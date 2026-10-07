@@ -24,7 +24,7 @@ struct CartScreen: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .navigationTitle("Cart")
+            .navigationTitle(Text(MR.strings.shared.cart_title))
             .safeAreaInset(edge: .bottom) {
                 if !store.state.isEmpty {
                     CheckoutBar(totalText: store.state.totalText) { store.viewModel.onBuyClick() }
@@ -68,7 +68,7 @@ private struct CartLineItem: View {
                     Text(line.totalText)
                         .fontWeight(.semibold)
                         .foregroundStyle(Palette.primary)
-                    Text("\(line.unitPriceText) each")
+                    Text(MR.strings.shared.price_each, line.unitPriceText)
                         .foregroundStyle(Palette.onSurfaceVariant)
                 }
                 .font(.subheadline)
@@ -93,10 +93,10 @@ private struct EmptyCart: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("🛒").font(.system(size: 64))
-            Text("Your cart is empty")
+            Text(MR.strings.shared.cart_empty)
                 .font(.headline)
                 .padding(.top, 16)
-            Button("Start shopping", action: onStartShopping)
+            Button(action: onStartShopping) { Text(MR.strings.shared.start_shopping) }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .tint(Palette.primary)
@@ -112,12 +112,12 @@ private struct CheckoutBar: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text("Total").font(.headline)
+                Text(MR.strings.shared.total).font(.headline)
                 Spacer()
                 Text(totalText).font(.title2.bold())
             }
             Button(action: onBuy) {
-                Text("Buy")
+                Text(MR.strings.shared.buy)
                     .font(.headline)
                     .foregroundStyle(Palette.onPrimary)
                     .frame(maxWidth: .infinity)
@@ -138,7 +138,7 @@ private struct OrderOverlayView: View {
         VStack(spacing: 0) {
             if let placedTotalText = state.placedOrderTotalText {
                 Text("✅").font(.system(size: 56))
-                Text("Order placed")
+                Text(MR.strings.shared.order_placed)
                     .font(.title2)
                     .padding(.top, 12)
                 Text(placedTotalText)
@@ -146,10 +146,10 @@ private struct OrderOverlayView: View {
                     .padding(.top, 8)
             } else if state.orderError != nil {
                 Text("❌").font(.system(size: 56))
-                Text("Order failed")
+                Text(MR.strings.shared.order_failed)
                     .font(.title2)
                     .padding(.top, 12)
-                Text("Your cart is still here. Please try again.")
+                Text(MR.strings.shared.order_failed_hint)
                     .font(.subheadline)
                     .foregroundStyle(Palette.onSurfaceVariant)
                     .multilineTextAlignment(.center)
@@ -158,7 +158,7 @@ private struct OrderOverlayView: View {
                 ProgressView()
                     .controlSize(.large)
                     .tint(Palette.primary)
-                Text("Placing your order…")
+                Text(MR.strings.shared.placing_order)
                     .font(.headline)
                     .padding(.top, 24)
             }

@@ -1,4 +1,5 @@
 import SwiftUI
+import SharedLogic
 
 /// "+" when the Product isn't in the Cart, otherwise `− n +`.
 /// At 1 the − becomes ✕, which removes the Cart Line.
@@ -21,13 +22,13 @@ struct QuantityStepper: View {
                     .background(Palette.primary, in: Circle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Add to cart")
+            .accessibilityLabel(Text(MR.strings.shared.add_to_cart))
         } else {
             HStack(spacing: 0) {
                 if quantity == 1 {
-                    stepButton("xmark", tint: Palette.error, label: "Remove from cart", action: onRemove)
+                    stepButton("xmark", tint: Palette.error, label: MR.strings.shared.remove_from_cart, action: onRemove)
                 } else {
-                    stepButton("minus", label: "Decrease quantity", action: onDecrement)
+                    stepButton("minus", label: MR.strings.shared.decrease_quantity, action: onDecrement)
                 }
                 if fillWidth { Spacer(minLength: 0) }
                 Text("\(quantity)")
@@ -35,7 +36,7 @@ struct QuantityStepper: View {
                     .foregroundStyle(Palette.onPrimaryContainer)
                     .frame(minWidth: 16)
                 if fillWidth { Spacer(minLength: 0) }
-                stepButton("plus", label: "Increase quantity", action: onAdd)
+                stepButton("plus", label: MR.strings.shared.increase_quantity, action: onAdd)
                     .disabled(!canAdd)
                     .opacity(canAdd ? 1 : 0.38)
             }
@@ -48,7 +49,7 @@ struct QuantityStepper: View {
     private func stepButton(
         _ systemName: String,
         tint: Color = Palette.onPrimaryContainer,
-        label: String,
+        label: SharedLogic.StringResource,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
@@ -59,7 +60,7 @@ struct QuantityStepper: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(label)
+        .accessibilityLabel(Text(label))
     }
 }
 

@@ -16,7 +16,7 @@ struct HomeScreen: View {
         NavigationStack {
             content
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .navigationTitle("Groceries")
+                .navigationTitle(Text(MR.strings.shared.home_title))
         }
     }
 
@@ -28,8 +28,8 @@ struct HomeScreen: View {
             ProgressView().controlSize(.large).tint(Palette.primary)
         } else if state.sections.isEmpty && state.error != nil {
             VStack(spacing: 16) {
-                Text("Couldn't load products")
-                Button("Retry") { store.viewModel.onRetryClick() }
+                Text(MR.strings.shared.home_error)
+                Button { store.viewModel.onRetryClick() } label: { Text(MR.strings.shared.retry) }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .tint(Palette.primary)
