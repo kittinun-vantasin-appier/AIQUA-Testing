@@ -131,7 +131,7 @@ private fun ProductCard(
         modifier = modifier,
     ) {
         Column {
-            Box(Modifier.fillMaxWidth().aspectRatio(1.25f)) { // wider than tall keeps tiles compact
+            Box(Modifier.fillMaxWidth().aspectRatio(1.5f)) {
                 Text(
                     text = row.product.emoji,
                     fontSize = 40.sp,

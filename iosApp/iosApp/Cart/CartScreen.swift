@@ -13,7 +13,7 @@ struct CartScreen: View {
         ))
         self.onStartShopping = onStartShopping
     }
-
+	
     var body: some View {
         NavigationStack {
             Group {
