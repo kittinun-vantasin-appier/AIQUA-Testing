@@ -13,7 +13,8 @@ class SectionsTest {
 
     @Test
     fun sortsCategoriesAndProductsAlphabeticallyWithUppercaseHeaders() {
-        val sections = sections(listOf(carrot, porkBelly, cabbage), Cart(listOf(CartLine(carrot, 1))))
+        val sections =
+            sections(listOf(carrot, porkBelly, cabbage), Cart(listOf(CartLine(carrot, 1))))
 
         assertEquals(listOf("MEAT", "VEGETABLES"), sections.map { it.title })
         assertEquals(listOf("Cabbage", "Carrot"), sections[1].rows.map { it.product.name })

@@ -30,15 +30,21 @@ class HomeViewModel(
     private val cartRepository: CartRepository,
 ) : ViewModel() {
     // Loading and error change together, so they live in one flow and never show a half-updated state.
-    private val loadState = MutableStateFlow(LoadState(isLoading = homeRepository.products.value == null))
+    private val loadState =
+        MutableStateFlow(LoadState(isLoading = homeRepository.products.value == null))
 
     @NativeCoroutinesState
-    val uiState: StateFlow<HomeUiState> = combine(homeRepository.products, cartRepository.cart, loadState, ::uiStateOf)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            uiStateOf(homeRepository.products.value, cartRepository.cart.value, loadState.value),
-        )
+    val uiState: StateFlow<HomeUiState> =
+        combine(homeRepository.products, cartRepository.cart, loadState, ::uiStateOf)
+            .stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                uiStateOf(
+                    homeRepository.products.value,
+                    cartRepository.cart.value,
+                    loadState.value
+                ),
+            )
 
     init {
         if (homeRepository.products.value == null) load()

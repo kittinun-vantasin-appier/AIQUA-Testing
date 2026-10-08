@@ -16,7 +16,8 @@ data class Cart(val lines: List<CartLine> = emptyList()) {
     val total: Int get() = lines.sumOf { it.total }
     val unitCount: Int get() = lines.sumOf { it.quantity }
 
-    fun quantityOf(productId: String): Int = lines.find { it.product.id == productId }?.quantity ?: 0
+    fun quantityOf(productId: String): Int =
+        lines.find { it.product.id == productId }?.quantity ?: 0
 }
 
 /** One Cart Line as the Cart screen shows it. */

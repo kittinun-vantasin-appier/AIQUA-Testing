@@ -1,6 +1,5 @@
 package com.github.kittinunf.aiqua_testing.ui
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -25,12 +23,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.kittinunf.aiqua_testing.R
-import com.github.kittinunf.aiqua_testing.resources.*
+import com.github.kittinunf.aiqua_testing.resources.MR
+import com.github.kittinunf.aiqua_testing.resources.add_to_cart
+import com.github.kittinunf.aiqua_testing.resources.decrease_quantity
+import com.github.kittinunf.aiqua_testing.resources.increase_quantity
+import com.github.kittinunf.aiqua_testing.resources.remove_from_cart
 import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 import dev.icerock.moko.resources.StringResource
 
@@ -54,7 +55,10 @@ fun QuantityStepper(
     if (quantity == 0) {
         CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides if (compact) 0.dp else 48.dp) {
             FilledIconButton(onClick = onAdd, modifier = modifier.then(buttonModifier)) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.add_to_cart))
+                Icon(
+                    painterResource(R.drawable.ic_add),
+                    contentDescription = stringResource(MR.strings.add_to_cart)
+                )
             }
         }
         return
@@ -80,7 +84,10 @@ fun QuantityStepper(
                 }
             } else {
                 IconButton(onClick = onDecrement, modifier = buttonModifier) {
-                    Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(MR.strings.decrease_quantity))
+                    Icon(
+                        painterResource(R.drawable.ic_remove),
+                        contentDescription = stringResource(MR.strings.decrease_quantity)
+                    )
                 }
             }
             Text(
@@ -90,7 +97,10 @@ fun QuantityStepper(
                 modifier = Modifier.widthIn(min = 16.dp),
             )
             IconButton(onClick = onAdd, enabled = canAdd, modifier = buttonModifier) {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(MR.strings.increase_quantity))
+                Icon(
+                    painterResource(R.drawable.ic_add),
+                    contentDescription = stringResource(MR.strings.increase_quantity)
+                )
             }
         }
     }
@@ -112,5 +122,10 @@ fun ProductEmoji(emoji: String, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenTopBar(resource: StringResource) {
-    TopAppBar(title = { Text(stringResource(resource), style = MaterialTheme.typography.displaySmall) })
+    TopAppBar(title = {
+        Text(
+            stringResource(resource),
+            style = MaterialTheme.typography.displaySmall
+        )
+    })
 }

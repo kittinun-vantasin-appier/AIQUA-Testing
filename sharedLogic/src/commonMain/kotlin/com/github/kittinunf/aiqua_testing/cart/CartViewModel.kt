@@ -41,7 +41,11 @@ class CartViewModel(
 
     @NativeCoroutinesState
     val uiState: StateFlow<CartUiState> = combine(cartRepository.cart, orderState, ::uiStateOf)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, uiStateOf(cartRepository.cart.value, orderState.value))
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            uiStateOf(cartRepository.cart.value, orderState.value)
+        )
 
     fun onAddClick(product: Product) = cartRepository.add(product)
 

@@ -26,7 +26,8 @@ kotlin {
         // Kotlin bindings for the AIQUA iOS SDK, generated from its Objective-C headers (see appier.def).
         iosTarget.compilations.getByName("main").cinterops.create("appier") {
             definitionFile.set(project.file("src/nativeInterop/cinterop/appier.def"))
-            val slice = if (iosTarget.name == "iosArm64") "ios-arm64" else "ios-arm64_x86_64-simulator"
+            val slice =
+                if (iosTarget.name == "iosArm64") "ios-arm64" else "ios-arm64_x86_64-simulator"
             compilerOpts("-F${appierIosHeaders.get().asFile}/Appier.xcframework/$slice")
             tasks.named(interopProcessingTaskName) { dependsOn(downloadAppierIosHeaders) }
         }
@@ -40,19 +41,19 @@ kotlin {
     }
 
     android {
-       namespace = "com.github.kittinunf.aiqua_testing.sharedLogic"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
+        namespace = "com.github.kittinunf.aiqua_testing.sharedLogic"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
 
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_21
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_21
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
 
     compilerOptions {
@@ -97,13 +98,14 @@ abstract class DownloadAppierIosHeaders : DefaultTask() {
     @TaskAction
     fun download() {
         val root = outputDir.get().asFile.apply { deleteRecursively(); mkdirs() }
-        val url = URI("https://github.com/appier/appier-ios-framework/archive/refs/tags/v${version.get()}.zip").toURL()
+        val url =
+            URI("https://github.com/appier/appier-ios-framework/archive/refs/tags/v${version.get()}.zip").toURL()
         ZipInputStream(url.openStream()).use { zip ->
             generateSequence { zip.nextEntry }.forEach { entry ->
                 // Entries look like "appier-ios-framework-8.11.3/Appier.xcframework/<slice>/Appier.framework/Headers/QGSdk.h".
                 val path = entry.name.substringAfter('/')
                 val wanted = path.startsWith("Appier.xcframework/") &&
-                    ("/Appier.framework/Headers/" in path || "/Appier.framework/Modules/" in path)
+                        ("/Appier.framework/Headers/" in path || "/Appier.framework/Modules/" in path)
                 if (wanted && !entry.isDirectory) {
                     val file = root.resolve(path).apply { parentFile.mkdirs() }
                     file.outputStream().use { zip.copyTo(it) }

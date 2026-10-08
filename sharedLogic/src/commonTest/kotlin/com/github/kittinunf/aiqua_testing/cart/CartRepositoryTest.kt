@@ -74,7 +74,8 @@ class CartRepositoryTest {
     @Test
     fun aFailedCheckoutLeavesTheCartAsItWas() = runTest {
         val failing = DefaultCartRepository(object : OrderService {
-            override suspend fun placeOrder(cart: Cart): Order = throw OrderFailedException("declined")
+            override suspend fun placeOrder(cart: Cart): Order =
+                throw OrderFailedException("declined")
         })
         failing.add(carrot)
 

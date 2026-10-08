@@ -16,13 +16,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,12 +32,21 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.github.kittinunf.aiqua_testing.R
-import com.github.kittinunf.aiqua_testing.resources.*
 import com.github.kittinunf.aiqua_testing.cart.CartLineRow
 import com.github.kittinunf.aiqua_testing.cart.CartUiState
 import com.github.kittinunf.aiqua_testing.cart.CartViewModel
 import com.github.kittinunf.aiqua_testing.catalog.Product
+import com.github.kittinunf.aiqua_testing.resources.MR
+import com.github.kittinunf.aiqua_testing.resources.buy
+import com.github.kittinunf.aiqua_testing.resources.cart_empty
+import com.github.kittinunf.aiqua_testing.resources.cart_title
+import com.github.kittinunf.aiqua_testing.resources.order_failed
+import com.github.kittinunf.aiqua_testing.resources.order_failed_hint
+import com.github.kittinunf.aiqua_testing.resources.order_placed
+import com.github.kittinunf.aiqua_testing.resources.placing_order
+import com.github.kittinunf.aiqua_testing.resources.price_each
+import com.github.kittinunf.aiqua_testing.resources.start_shopping
+import com.github.kittinunf.aiqua_testing.resources.total
 import com.github.kittinunf.aiqua_testing.ui.ProductEmoji
 import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
 import com.github.kittinunf.aiqua_testing.ui.ScreenTopBar
@@ -72,7 +79,9 @@ private fun CartContent(
         topBar = { ScreenTopBar(MR.strings.cart_title) },
         bottomBar = { if (!state.isEmpty) CheckoutBar(state.totalText, onBuy) },
     ) { padding ->
-        val modifier = Modifier.fillMaxSize().padding(padding)
+        val modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
         if (state.isEmpty) {
             EmptyCart(onStartShopping, modifier)
         } else {
@@ -116,9 +125,16 @@ private fun CartLineItem(
         headlineContent = { Text(line.product.name) },
         supportingContent = {
             Row {
-                Text(line.totalText, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
                 Text(
-                    text = "  " + stringResource(MR.strings.price_each.resourceId, line.unitPriceText),
+                    line.totalText,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "  " + stringResource(
+                        MR.strings.price_each.resourceId,
+                        line.unitPriceText
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -138,15 +154,24 @@ private fun CartLineItem(
 @Composable
 private fun CheckoutBar(totalText: String, onBuy: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+        Column(Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(MR.strings.total), style = MaterialTheme.typography.titleMedium)
                 Spacer(Modifier.weight(1f))
-                Text(totalText, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                Text(
+                    totalText,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
             }
             Button(
                 onClick = onBuy,
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp).height(56.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .height(56.dp),
             ) {
                 Text(stringResource(MR.strings.buy), style = MaterialTheme.typography.titleMedium)
             }
@@ -167,11 +192,18 @@ private fun OrderOverlayDialog(state: CartUiState) {
         ),
     ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Surface(shape = RoundedCornerShape(28.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+            Surface(
+                shape = RoundedCornerShape(28.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
+            ) {
                 // Animate only when the phase changes: placing → placed or failed.
-                AnimatedContent(targetState = state, contentKey = { it.isPlacingOrder to (it.orderError != null) }) { state ->
+                AnimatedContent(
+                    targetState = state,
+                    contentKey = { it.isPlacingOrder to (it.orderError != null) }) { state ->
                     Column(
-                        modifier = Modifier.padding(32.dp).widthIn(min = 220.dp),
+                        modifier = Modifier
+                            .padding(32.dp)
+                            .widthIn(min = 220.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         val placedTotalText = state.placedOrderTotalText

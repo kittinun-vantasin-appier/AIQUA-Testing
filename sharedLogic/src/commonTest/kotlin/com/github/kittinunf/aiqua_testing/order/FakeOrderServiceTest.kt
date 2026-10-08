@@ -19,6 +19,8 @@ class FakeOrderServiceTest {
             }
         }
 
-        assertEquals(listOf(5, 10), outcomes.withIndex().filter { it.value == "failed" }.map { it.index + 1 })
+        assertEquals(
+            listOf(5, 10),
+            outcomes.withIndex().filter { it.value == "failed" }.map { it.index + 1 })
     }
 }

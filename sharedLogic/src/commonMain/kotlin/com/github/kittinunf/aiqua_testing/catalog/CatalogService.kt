@@ -21,7 +21,12 @@ class JsonCatalogService(
 ) : CatalogService {
     override suspend fun fetchProducts(): List<Product> {
         delay(latency)
-        return withContext(Dispatchers.Default) { parseProducts(Json { ignoreUnknownKeys = true },readJson()) }
+        return withContext(Dispatchers.Default) {
+            parseProducts(
+                Json { ignoreUnknownKeys = true },
+                readJson()
+            )
+        }
     }
 }
 

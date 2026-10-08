@@ -71,4 +71,5 @@ private fun Cart.minus(ordered: Cart) = copy(
 private fun Cart.withQuantity(productId: String, quantity: Int) =
     copy(lines = lines.map { if (it.product.id == productId) it.copy(quantity = quantity) else it })
 
-private fun Cart.without(productId: String) = copy(lines = lines.filterNot { it.product.id == productId })
+private fun Cart.without(productId: String) =
+    copy(lines = lines.filterNot { it.product.id == productId })

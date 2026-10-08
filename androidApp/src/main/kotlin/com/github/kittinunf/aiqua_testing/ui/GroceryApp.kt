@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -27,7 +26,9 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.github.kittinunf.aiqua_testing.AppContainer
 import com.github.kittinunf.aiqua_testing.R
-import com.github.kittinunf.aiqua_testing.resources.*
+import com.github.kittinunf.aiqua_testing.resources.MR
+import com.github.kittinunf.aiqua_testing.resources.tab_cart
+import com.github.kittinunf.aiqua_testing.resources.tab_home
 import com.github.kittinunf.aiqua_testing.ui.cart.CartScreen
 import com.github.kittinunf.aiqua_testing.ui.home.HomeScreen
 import com.github.kittinunf.aiqua_testing.ui.theme.GroceryTheme
@@ -59,7 +60,12 @@ fun GroceryApp(container: AppContainer) {
                     NavigationBarItem(
                         selected = current == HomeRoute,
                         onClick = goHome,
-                        icon = { Icon(painterResource(R.drawable.ic_home), contentDescription = null) },
+                        icon = {
+                            Icon(
+                                painterResource(R.drawable.ic_home),
+                                contentDescription = null
+                            )
+                        },
                         label = { Text(stringResource(MR.strings.tab_home)) },
                     )
                     NavigationBarItem(
@@ -77,7 +83,9 @@ fun GroceryApp(container: AppContainer) {
         ) { padding ->
             NavDisplay(
                 backStack = backStack,
-                modifier = Modifier.padding(padding).consumeWindowInsets(padding),
+                modifier = Modifier
+                    .padding(padding)
+                    .consumeWindowInsets(padding),
                 onBack = { backStack.removeLastOrNull() },
                 entryDecorators = listOf(
                     rememberSaveableStateHolderNavEntryDecorator(),
@@ -88,7 +96,12 @@ fun GroceryApp(container: AppContainer) {
                 predictivePopTransitionSpec = { fadeIn() togetherWith fadeOut() },
                 entryProvider = entryProvider {
                     entry<HomeRoute> { HomeScreen(viewModel { container.homeViewModel() }) }
-                    entry<CartRoute> { CartScreen(viewModel { container.cartViewModel() }, onStartShopping = goHome) }
+                    entry<CartRoute> {
+                        CartScreen(
+                            viewModel { container.cartViewModel() },
+                            onStartShopping = goHome
+                        )
+                    }
                 },
             )
         }
