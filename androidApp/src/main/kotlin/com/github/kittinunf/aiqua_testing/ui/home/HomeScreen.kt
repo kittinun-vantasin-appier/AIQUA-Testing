@@ -15,15 +15,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,7 +43,6 @@ import com.github.kittinunf.aiqua_testing.resources.home_error
 import com.github.kittinunf.aiqua_testing.resources.home_title
 import com.github.kittinunf.aiqua_testing.resources.retry
 import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
-import com.github.kittinunf.aiqua_testing.ui.ScreenTopBar
 import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 
 private const val COLUMNS = 3
@@ -56,6 +60,7 @@ fun HomeScreen(viewModel: HomeViewModel) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeContent(
     state: HomeUiState,
@@ -64,7 +69,34 @@ private fun HomeContent(
     onDecrement: (Product) -> Unit,
     onRemove: (Product) -> Unit,
 ) {
-    Scaffold(topBar = { ScreenTopBar(MR.strings.home_title) }) { padding ->
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            LargeTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(MR.strings.home_title),
+                        modifier = Modifier.fillMaxWidth(),
+                        fontWeight = FontWeight.Medium,
+                        textAlign = if (scrollBehavior.state.collapsedFraction > 0.5f) {
+                            TextAlign.Center
+                        } else {
+                            TextAlign.Start
+                        },
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+                expandedHeight = 100.dp,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    scrolledContainerColor = MaterialTheme.colorScheme.surface,
+                ),
+                scrollBehavior = scrollBehavior,
+            )
+        },
+    ) { padding ->
         val modifier = Modifier
             .fillMaxSize()
             .padding(padding)

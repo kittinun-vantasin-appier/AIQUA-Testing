@@ -3,9 +3,6 @@ import SharedLogic
 import KMPNativeCoroutinesAsync
 import KMPNativeCoroutinesCore
 
-/// Holds one screen's shared Kotlin ViewModel and republishes its UI state to SwiftUI for as long as the Store lives,
-/// so a screen is never shown with stale state, even right after switching tabs.
-/// When SwiftUI releases the Store, observing stops and the ViewModel is cleared so its coroutines stop.
 final class Store<VM: AnyObject, State>: ObservableObject {
     let viewModel: VM
     @Published private(set) var state: State
