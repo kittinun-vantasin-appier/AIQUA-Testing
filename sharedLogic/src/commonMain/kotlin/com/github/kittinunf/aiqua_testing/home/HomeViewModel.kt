@@ -2,6 +2,8 @@ package com.github.kittinunf.aiqua_testing.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
+import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.github.kittinunf.aiqua_testing.cart.Cart
 import com.github.kittinunf.aiqua_testing.cart.CartRepository
 import com.github.kittinunf.aiqua_testing.catalog.Product
@@ -28,6 +30,7 @@ data class HomeUiState(
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val cartRepository: CartRepository,
+    private val eventLogger: EventLogger,
 ) : ViewModel() {
     // Loading and error change together, so they live in one flow and never show a half-updated state.
     private val loadState =
@@ -49,6 +52,9 @@ class HomeViewModel(
     init {
         if (homeRepository.products.value == null) load()
     }
+
+    /** The screen became visible. The UI calls this; a ViewModel can't tell on its own. */
+    fun onScreenViewed() = eventLogger.screenViewed("home")
 
     fun onRetryClick() = load()
 

@@ -32,6 +32,7 @@ struct CartScreen: View {
                 }
             }
         }
+        .onAppear { store.viewModel.onScreenViewed() }
         // Covers the whole app, tab bar included; it fades in and out as the state says.
         .fadingCover(item: store.state.isOrderOverlayVisible ? store.state : nil) { state in
             OrderOverlayView(state: state)

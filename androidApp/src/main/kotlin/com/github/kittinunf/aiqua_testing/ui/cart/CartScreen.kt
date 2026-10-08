@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.kittinunf.aiqua_testing.cart.CartLineRow
 import com.github.kittinunf.aiqua_testing.cart.CartUiState
@@ -55,6 +56,7 @@ import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 @Composable
 fun CartScreen(viewModel: CartViewModel, onStartShopping: () -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { viewModel.onScreenViewed() }
     CartContent(
         state = state,
         onStartShopping = onStartShopping,

@@ -1,5 +1,7 @@
 package com.github.kittinunf.aiqua_testing
 
+import com.github.kittinunf.aiqua_testing.aiqua.Aiqua
+import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
 import com.github.kittinunf.aiqua_testing.cart.CartRepository
 import com.github.kittinunf.aiqua_testing.cart.CartViewModel
 import com.github.kittinunf.aiqua_testing.cart.DefaultCartRepository
@@ -11,21 +13,30 @@ import com.github.kittinunf.aiqua_testing.home.HomeRepository
 import com.github.kittinunf.aiqua_testing.home.HomeViewModel
 import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import com.github.kittinunf.aiqua_testing.order.OrderService
-import kotlinx.serialization.json.internal.readJson
 
 /**
  * Creates the app's shared objects once: stateless Services, the stateful Repositories built on them,
  * and the ViewModels that use the Repositories. Android keeps one in its Application, and iOS keeps one in its App.
  */
-class AppContainer(catalogService: CatalogService, orderService: OrderService) {
+class AppContainer(
+    catalogService: CatalogService,
+    orderService: OrderService,
+    private val eventLogger: EventLogger,
+) {
 
-    constructor() : this(catalogService = JsonCatalogService(readJson = ::readProductJson), orderService = FakeOrderService()) {}
+    /** The real app setup: the bundled Catalog, the fake order backend, and events sent to AIQUA. */
+    constructor() : this(
+        catalogService = JsonCatalogService(readJson = ::readProductJson),
+        orderService = FakeOrderService(),
+        eventLogger = Aiqua,
+    )
+
     private val homeRepository: HomeRepository = DefaultHomeRepository(catalogService)
     private val cartRepository: CartRepository = DefaultCartRepository(orderService)
 
     fun mainViewModel() = MainViewModel(cartRepository)
 
-    fun homeViewModel() = HomeViewModel(homeRepository, cartRepository)
+    fun homeViewModel() = HomeViewModel(homeRepository, cartRepository, eventLogger)
 
-    fun cartViewModel() = CartViewModel(cartRepository)
+    fun cartViewModel() = CartViewModel(cartRepository, eventLogger)
 }

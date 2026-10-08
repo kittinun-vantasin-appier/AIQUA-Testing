@@ -38,7 +38,7 @@ class HomeViewModelTest {
                 products.value = listOf(carrot)
             }
         }
-        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()))
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), eventLogger = { _, _ -> })
 
         viewModel.uiState.value.let {
             assertFalse(it.isLoading)
@@ -54,5 +54,21 @@ class HomeViewModelTest {
             assertNull(it.error)
             assertEquals(listOf("VEGETABLES"), it.sections.map { section -> section.title })
         }
+    }
+
+    @Test
+    fun aScreenViewLogsTheHomeScreen() {
+        val logged = mutableListOf<Pair<String, Map<String, Any>>>()
+        val repository = object : HomeRepository {
+            override val products = MutableStateFlow<List<Product>?>(listOf(carrot))
+            override suspend fun refresh() = Unit
+        }
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService())) { name, parameters ->
+            logged += name to parameters
+        }
+
+        viewModel.onScreenViewed()
+
+        assertEquals(listOf("screen_viewed" to mapOf<String, Any>("screen_name" to "home")), logged)
     }
 }

@@ -1,4 +1,4 @@
-### What about the app?
+## What about the app?
 
 The app is the blackbox testing to test AIQUA SDK integration. It uses Kotlin Multiplatform technology (KMP)
 So the core logic can be shared across iOS & Android. The UI stays native with Compose (Android) and SwiftUI (iOS). 

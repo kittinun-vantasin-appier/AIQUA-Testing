@@ -45,7 +45,7 @@ class CartViewModelTest {
             }
         }
         val cartRepository = DefaultCartRepository(orderService)
-        val viewModel = CartViewModel(cartRepository)
+        val viewModel = CartViewModel(cartRepository, eventLogger = { _, _ -> })
         cartRepository.add(carrot)
         runCurrent()
 

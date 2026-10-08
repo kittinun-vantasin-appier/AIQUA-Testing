@@ -19,6 +19,7 @@ struct HomeScreen: View {
                 .background(Color(MR.colors.shared.surface)) // same page background as Android, incl. dark mode
                 .navigationTitle(Text(MR.strings.shared.home_title))
         }
+        .onAppear { store.viewModel.onScreenViewed() }
     }
 
     // Content wins: once there are sections, keep showing them whatever else is going on.

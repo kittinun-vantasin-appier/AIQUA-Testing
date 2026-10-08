@@ -124,10 +124,11 @@ Only `moko:resources` is exported to Swift, not `moko:graphics`: its `Color` cla
 ## AIQUA SDK
 
 `Aiqua` is an `expect object` in `sharedLogic` (`aiqua/`) with one `actual object` per platform over the native SDK.
-The common declaration holds what both platforms share; each platform adds its own `init`, because Android needs the
-`Application` and iOS doesn't. Each app calls it at launch: `Aiqua.init(application = this)` in
-`GroceryApplication.onCreate`, `Aiqua.shared.configure()` in the iOS `App`'s `init` (`init` is reserved in Swift).
-The app ID is `Constants.APP_ID`. `AppContainer` doesn't touch the SDK.
+It keeps no state: the SDK holds its own single client, which `Aiqua` asks for when it needs it (Android:
+`QG.getInstance(AppContextProvider.appContext)`, the same captured Context the catalog uses; iOS:
+`QGSdk.getSharedInstance()`). Each platform has its own `init` (Android needs the `Application`, iOS doesn't):
+`Aiqua.init(application = this)` in `GroceryApplication.onCreate`, `Aiqua.shared.configure()` in the iOS `App`'s `init`
+(`init` is reserved in Swift). The app ID is `Constants.APP_ID`.
 
 | | Android | iOS |
 |---|---|---|
@@ -135,8 +136,17 @@ The app ID is `Constants.APP_ID`. `AppContainer` doesn't touch the SDK.
 | Kotlin calls | `QG.initializeSdk(application, appId)`; verbose SDK logs in debug builds | `QGSdk.getSharedInstance().onStart(appId)` through Kotlin bindings generated from the SDK's Objective-C headers (`appier.def`; Gradle downloads the headers of the same version) |
 | Version pin | `appier-android` in `libs.versions.toml` | `appier-ios` in `libs.versions.toml` **and** the Swift package's exact version in Xcode: keep them equal |
 
-Firebase isn't set up yet: Android logs a warning and push won't work, but the SDK starts. No custom events are sent yet;
-when they are, they come from ViewModels ([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)).
+Firebase isn't set up; the SDK uses its own internal Firebase instance, so events (and even push tokens) work without
+a `google-services.json`.
+
+### Events
+
+ViewModels send events ([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)) through `EventLogger`, a
+one-method interface that `Aiqua` implements (`AppContainer()` passes it to the ViewModels); tests use a fake. Event names and parameter keys live in `EventLogger.kt`.
+
+| Event | Parameters | Sent when |
+|---|---|---|
+| `screen_viewed` | `screen_name`: `home` / `cart` | The screen appears. A ViewModel can't see that, so the UI calls `onScreenViewed()`: Android from a `LaunchedEffect`, iOS from `.onAppear`. That covers app launch and tab switches; on Android a rotation re-sends it, because the screen is composed again. |
 
 ## Platform glue
 

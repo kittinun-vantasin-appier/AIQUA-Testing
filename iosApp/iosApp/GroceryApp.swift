@@ -3,7 +3,7 @@ import SharedLogic
 
 @main
 struct Application: App {
-    private let container: AppContainer = AppContainer()
+    private let container = AppContainer()
 
     init() {
         Aiqua.shared.configure()

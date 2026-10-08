@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.home.HomeUiState
@@ -45,6 +46,7 @@ private const val COLUMNS = 3
 @Composable
 fun HomeScreen(viewModel: HomeViewModel) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) { viewModel.onScreenViewed() }
     HomeContent(
         state = state,
         onRetry = viewModel::onRetryClick,
