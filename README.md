@@ -5,6 +5,22 @@ So the core logic can be shared across iOS & Android including the AIQUA's insta
 
 The architecture of the app is documented at [docs/architecture.md](./docs/architecture.md) and for how data flows through the app, and [docs/adr](./docs/adr) for key decisions for all technical decisions in building the app.
 
+### AIQUA events
+
+These are the events the app sends to AIQUA. Both apps send the same events from the shared ViewModels (`sharedLogic`),
+so Android and iOS always match. Every 5th Order fails on purpose, so `checkout_failed` is easy to trigger.
+
+| Event | Parameters | Sent when |
+|---|---|---|
+| `screen_viewed` | `screen_name`: `home` / `cart` | A screen appears: app launch or a tab switch. On Android, rotating the screen sends it again. |
+| `product_purchased` | `order_id`, `product_id`, `product_name`, `category`, `price` (one unit, yen), `quantity` | An Order was placed: one event per item, before `checkout_completed`. No value. |
+| `checkout_completed` | `order_id`; **valueToSum** = Order total, **valueToSumCurrency** = `JPY` | An Order was placed. The only event with a value, so revenue is counted once. |
+| `checkout_failed` | `reason` (the error message) | Placing an Order failed. No value and no per-item events. |
+
+Events sharing an `order_id` belong to the same Order. To see them, open the AIQUA dashboard, then Settings >
+Recent activity (Android / iOS tabs); they can take a few minutes to appear. How events are wired is in
+[docs/architecture.md](./docs/architecture.md#events).
+
 ### Screenshots
 
 Native Android and iOS screens, captured from the running apps.

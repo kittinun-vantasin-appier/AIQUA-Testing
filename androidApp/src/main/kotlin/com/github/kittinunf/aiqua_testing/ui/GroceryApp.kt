@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,6 +58,11 @@ fun GroceryApp(container: AppContainer) {
 
         Scaffold(
             bottomBar = {
+                val tabColors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = MaterialTheme.colorScheme.primary,
+                    selectedTextColor = MaterialTheme.colorScheme.primary,
+                    indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                )
                 NavigationBar {
                     NavigationBarItem(
                         selected = current == HomeRoute,
@@ -67,6 +74,7 @@ fun GroceryApp(container: AppContainer) {
                             )
                         },
                         label = { Text(stringResource(MR.strings.tab_home)) },
+                        colors = tabColors,
                     )
                     NavigationBarItem(
                         selected = current == CartRoute,
@@ -77,6 +85,7 @@ fun GroceryApp(container: AppContainer) {
                             }
                         },
                         label = { Text(stringResource(MR.strings.tab_cart)) },
+                        colors = tabColors,
                     )
                 }
             },
@@ -91,9 +100,6 @@ fun GroceryApp(container: AppContainer) {
                     rememberSaveableStateHolderNavEntryDecorator(),
                     rememberViewModelStoreNavEntryDecorator(),
                 ),
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
-                popTransitionSpec = { fadeIn() togetherWith fadeOut() },
-                predictivePopTransitionSpec = { fadeIn() togetherWith fadeOut() },
                 entryProvider = entryProvider {
                     entry<HomeRoute> { HomeScreen(viewModel { container.homeViewModel() }) }
                     entry<CartRoute> {

@@ -10,6 +10,7 @@ import kotlin.time.Duration.Companion.seconds
 /** A confirmed purchase of everything that was in the Cart. [id] is the Order ID. */
 data class Order(val id: String, val cart: Cart) {
     val total: Int get() = cart.total
+    val count: Int get() = cart.unitCount
 }
 
 /** Thrown when an Order can't be placed. No Order exists, and the Cart is left as it was. */

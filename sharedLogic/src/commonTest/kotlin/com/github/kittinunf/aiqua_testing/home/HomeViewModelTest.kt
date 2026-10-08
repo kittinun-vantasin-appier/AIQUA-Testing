@@ -38,7 +38,7 @@ class HomeViewModelTest {
                 products.value = listOf(carrot)
             }
         }
-        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), eventLogger = { _, _ -> })
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), eventLogger = { _, _, _, _ -> })
 
         viewModel.uiState.value.let {
             assertFalse(it.isLoading)
@@ -63,7 +63,7 @@ class HomeViewModelTest {
             override val products = MutableStateFlow<List<Product>?>(listOf(carrot))
             override suspend fun refresh() = Unit
         }
-        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService())) { name, parameters ->
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService())) { name, parameters, _, _ ->
             logged += name to parameters
         }
 

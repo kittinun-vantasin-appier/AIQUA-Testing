@@ -14,10 +14,8 @@ interface CartRepository {
     @NativeCoroutinesIgnore // Swift goes through ViewModels, never Repositories.
     val cart: StateFlow<Cart>
 
-    /** Adds one unit, appending a new Cart Line if the Product isn't in the Cart yet. Stops at [CartLine.MAX_QUANTITY]. */
     fun add(product: Product)
 
-    /** Takes away one unit. Taking away the last unit removes the Cart Line. */
     fun decrement(productId: String)
 
     fun remove(productId: String)

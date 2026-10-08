@@ -12,6 +12,9 @@ data class Product(
     val price: Int,
 )
 
+/** The currency of every Price (ISO 4217): whole Japanese yen. */
+const val CURRENCY = "JPY"
+
 /** Formats whole yen for display, e.g. 1280 -> "¥1,280". */
 fun formatPrice(yen: Int): String =
     "¥" + yen.toString().reversed().chunked(3).joinToString(",").reversed()

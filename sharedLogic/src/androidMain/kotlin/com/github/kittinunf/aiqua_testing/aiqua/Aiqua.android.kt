@@ -27,8 +27,9 @@ actual object Aiqua : EventLogger {
     }
 
     // The SDK keeps its single client itself; it only needs a Context to hand it back.
-    actual override fun logEvent(name: String, parameters: Map<String, Any>) {
-        AppierQG.getInstance(AppContextProvider.appContext).logEvent(name, JSONObject(parameters))
+    actual override fun logEvent(name: String, parameters: Map<String, Any>, valueToSum: Double?, valueToSumCurrency: String?) {
+        AppierQG.getInstance(AppContextProvider.appContext)
+            .logEvent(name, JSONObject(parameters), valueToSum, valueToSumCurrency)
     }
 }
 

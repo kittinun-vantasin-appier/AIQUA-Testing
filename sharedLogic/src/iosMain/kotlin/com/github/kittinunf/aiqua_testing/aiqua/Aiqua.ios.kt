@@ -3,6 +3,7 @@ package com.github.kittinunf.aiqua_testing.aiqua
 import com.appier.ios.QGSdk
 import com.github.kittinunf.aiqua_testing.Constants
 import com.github.kittinunf.aiqua_testing.getPlatform
+import platform.Foundation.NSNumber
 
 @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual typealias QG = QGSdk
@@ -23,7 +24,12 @@ actual object Aiqua : EventLogger {
         qg.setCustomKey("platform", platform.name)
     }
 
-    actual override fun logEvent(name: String, parameters: Map<String, Any>) {
-        QGSdk.getSharedInstance().logEvent(name, withParameters = parameters as Map<Any?, *>)
+    actual override fun logEvent(name: String, parameters: Map<String, Any>, valueToSum: Double?, valueToSumCurrency: String?) {
+        QGSdk.getSharedInstance().logEvent(
+            name,
+            withParameters = parameters as Map<Any?, *>,
+            withValueToSum = valueToSum?.let { NSNumber(double = it) },
+            withValueToSumCurrency = valueToSumCurrency,
+        )
     }
 }

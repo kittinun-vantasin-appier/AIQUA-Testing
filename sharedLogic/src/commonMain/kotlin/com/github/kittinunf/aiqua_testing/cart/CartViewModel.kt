@@ -3,6 +3,8 @@ package com.github.kittinunf.aiqua_testing.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
+import com.github.kittinunf.aiqua_testing.aiqua.checkoutFailed
+import com.github.kittinunf.aiqua_testing.aiqua.orderPlaced
 import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.catalog.formatPrice
@@ -26,9 +28,7 @@ data class CartUiState(
     val lines: List<CartLineRow> = emptyList(),
     val totalText: String = formatPrice(0),
     val isPlacingOrder: Boolean = false,
-    /** Set for a moment after an Order is placed, to show "Order placed" with its total. */
     val placedOrderTotalText: String? = null,
-    /** Set for a moment after placing an Order fails. The Cart is unchanged, so the Shopper can tap Buy again. */
     val orderError: Throwable? = null,
 ) {
     val isEmpty: Boolean get() = lines.isEmpty()
@@ -65,10 +65,12 @@ class CartViewModel(
         viewModelScope.launch {
             orderState.value = try {
                 val order = cartRepository.checkout()
+                eventLogger.orderPlaced(order)
                 OrderState(placedTotalText = formatPrice(order.total))
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
+                eventLogger.checkoutFailed(e)
                 OrderState(error = e)
             }
             delay(resultDisplayTime)

@@ -141,12 +141,11 @@ a `google-services.json`.
 
 ### Events
 
-ViewModels send events ([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)) through `EventLogger`, a
-one-method interface that `Aiqua` implements (`AppContainer()` passes it to the ViewModels); tests use a fake. Event names and parameter keys live in `EventLogger.kt`.
-
-| Event | Parameters | Sent when |
-|---|---|---|
-| `screen_viewed` | `screen_name`: `home` / `cart` | The screen appears. A ViewModel can't see that, so the UI calls `onScreenViewed()`: Android from a `LaunchedEffect`, iOS from `.onAppear`. That covers app launch and tab switches; on Android a rotation re-sends it, because the screen is composed again. |
+The events the app sends, and when, are listed in the [README](../README.md#aiqua-events). They come from ViewModels
+([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)) through `EventLogger`, a one-method interface
+mirroring the SDK, `logEvent(name, parameters, valueToSum, valueToSumCurrency)`. `Aiqua` implements it and
+`AppContainer()` passes it to the ViewModels; tests use a fake. Event names and parameter keys live in `EventLogger.kt`,
+and the currency is `CURRENCY` (`JPY`) next to `formatPrice`.
 
 ## Platform glue
 

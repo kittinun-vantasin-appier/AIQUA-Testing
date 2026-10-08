@@ -9,7 +9,7 @@ expect object Aiqua : EventLogger {
 
     fun setCustomUserAttributes(qg: QG)
 
-    override fun logEvent(name: String, parameters: Map<String, Any>)
+    override fun logEvent(name: String, parameters: Map<String, Any>, valueToSum: Double?, valueToSumCurrency: String?)
 }
 
 expect class QG

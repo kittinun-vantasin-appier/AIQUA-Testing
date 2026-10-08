@@ -45,7 +45,18 @@ class CartViewModelTest {
             }
         }
         val cartRepository = DefaultCartRepository(orderService)
-        val viewModel = CartViewModel(cartRepository, eventLogger = { _, _ -> })
+        val logged = mutableListOf<LoggedEvent>()
+        val viewModel = CartViewModel(
+            cartRepository,
+            eventLogger = { name, parameters, value, currency ->
+                logged += LoggedEvent(
+                    name,
+                    parameters,
+                    value,
+                    currency
+                )
+            },
+        )
         cartRepository.add(carrot)
         runCurrent()
 
@@ -60,6 +71,8 @@ class CartViewModelTest {
             assertNotNull(it.orderError)
             assertEquals(1, it.lines.size) // the Cart is still there
         }
+        assertEquals(listOf(LoggedEvent("checkout_failed", mapOf("reason" to "declined"))), logged)
+        logged.clear()
 
         advanceTimeBy(2.seconds)
         runCurrent()
@@ -74,5 +87,33 @@ class CartViewModelTest {
             assertNull(it.orderError)
             assertTrue(it.isEmpty)
         }
+        assertEquals(
+            listOf(
+                LoggedEvent(
+                    "product_purchased",
+                    mapOf(
+                        "order_id" to "ORD-000001",
+                        "product_id" to "carrot",
+                        "product_name" to "Carrot",
+                        "category" to "vegetables",
+                        "price" to 98, "quantity" to 1,
+                    ),
+                ),
+                LoggedEvent(
+                    "checkout_completed",
+                    mapOf("order_id" to "ORD-000001", "product_count" to 1),
+                    value = 98.0,
+                    currency = "JPY"
+                ),
+            ),
+            logged,
+        )
     }
+
+    private data class LoggedEvent(
+        val name: String,
+        val parameters: Map<String, Any>,
+        val value: Double? = null,
+        val currency: String? = null,
+    )
 }
