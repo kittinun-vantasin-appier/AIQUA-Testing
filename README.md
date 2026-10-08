@@ -1,10 +1,9 @@
 ## What about the app?
 
 The app is the blackbox testing to test AIQUA SDK integration. It uses Kotlin Multiplatform technology (KMP)
-So the core logic can be shared across iOS & Android. The UI stays native with Compose (Android) and SwiftUI (iOS). 
+So the core logic can be shared across iOS & Android including the AIQUA's installation, event logging, etc. However, the UI stays native with Compose (Android) and SwiftUI (iOS) to be closer to the UI for each platform. 
 
-The architecture of the app is documented at [docs/architecture.md](./docs/architecture.md) and for how data
-flows through the app, and [docs/adr](./docs/adr) for key decisions.
+The architecture of the app is documented at [docs/architecture.md](./docs/architecture.md) and for how data flows through the app, and [docs/adr](./docs/adr) for key decisions for all technical decisions in building the app.
 
 ### Screenshots
 
