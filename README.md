@@ -14,7 +14,7 @@ so Android and iOS always match. Every 5th Order fails on purpose, so `checkout_
 |---|---|---|
 | `screen_viewed` | `screen_name`: `home` / `cart` | A screen appears: app launch or a tab switch. On Android, rotating the screen sends it again. |
 | `product_purchased` | `order_id`, `product_id`, `product_name`, `category`, `price` (one unit, yen), `quantity` | An Order was placed: one event per item, before `checkout_completed`. No value. |
-| `checkout_completed` | `order_id`; **valueToSum** = Order total, **valueToSumCurrency** = `JPY` | An Order was placed. The only event with a value, so revenue is counted once. |
+| `checkout_completed` | `order_id`, `product_count`, **valueToSum** = Order total, **valueToSumCurrency** = `JPY` (hardcoded as JPY for now :P) | An Order was placed. The only event with a value, so revenue is counted once. |
 | `checkout_failed` | `reason` (the error message) | Placing an Order failed. No value and no per-item events. |
 
 Events sharing an `order_id` belong to the same Order. To see them, open the AIQUA dashboard, then Settings >
