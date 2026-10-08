@@ -1,17 +1,10 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
-A grocery shop (Home catalog + Cart with Buy) used as a host app for testing the AIQUA SDK.
-See [CONTEXT.md](./CONTEXT.md) for the domain language, [docs/architecture.md](./docs/architecture.md) for how data
+### What about the app?
+
+The app is the blackbox testing to test AIQUA SDK integration. It uses Kotlin Multiplatform technology (KMP)
+So the core logic can be shared across iOS & Android. The UI stays native with Compose (Android) and SwiftUI (iOS). 
+
+The architecture of the app is documented at [docs/architecture.md](./docs/architecture.md) and for how data
 flows through the app, and [docs/adr](./docs/adr) for key decisions.
-
-* [/androidApp](./androidApp/src/main/kotlin) is the Android app: Jetpack Compose UI with Navigation 3.
-
-* [/iosApp](./iosApp/iosApp) is the iOS app: SwiftUI with the same screens, observing the shared ViewModels through
-  the KMPNativeCoroutinesAsync Swift package. A build phase copies the shared moko-resources bundle into the app.
-
-* [/sharedLogic](./sharedLogic/src) holds everything shared by both apps: Services, Repositories
-  and the screen ViewModels (exposed to Swift through KMP-NativeCoroutines).
-  Shared text, colours and the catalog ([product.json](./sharedLogic/src/commonMain/moko-resources/files/product.json))
-  live in [moko-resources](./sharedLogic/src/commonMain/moko-resources).
 
 ### Running the apps
 
