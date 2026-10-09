@@ -147,6 +147,20 @@ mirroring the SDK, `logEvent(name, parameters, valueToSum, valueToSumCurrency)`.
 `AppContainer()` passes it to the ViewModels; tests use a fake. Event names and parameter keys live in `EventLogger.kt`,
 and the currency is `CURRENCY` (`JPY`) next to `formatPrice`.
 
+### Inbox
+
+Inbox campaign messages are fetched by the app, not pushed: `MainViewModel` calls `InboxRepository.refresh()` once per
+launch. `InboxService.fetchMessages()` downloads them into the SDK's on-device storage and returns what's stored (newest
+first); if the download fails it still returns the stored ones. Home shows an envelope with the unread count; it opens
+the inbox as a bottom sheet over Home. The SDK doesn't log impressions or clicks for inbox messages, so `InboxViewModel`
+does, against the message itself (`logMessageEvent`), not through `EventLogger`. Messages are never deleted; tapping one
+marks it read.
+
+`AiquaInbox` (`aiqua/AiquaInbox.kt`) implements `InboxService` in common code. The platforms only supply what the two
+SDKs do differently, each in one line: `NativeInbox` is a typealias of the SDK's message class (`AiqInbox` / `QGInbox`),
+plus converting it to `InboxMessage`, marking it read, logging an event on it, fetching, and listing. Messages are
+looked up by ID on every call instead of kept, so it stays stateless.
+
 ## Platform glue
 
 | | Android | iOS |

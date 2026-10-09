@@ -30,6 +30,7 @@ import com.github.kittinunf.aiqua_testing.resources.tab_cart
 import com.github.kittinunf.aiqua_testing.resources.tab_home
 import com.github.kittinunf.aiqua_testing.ui.cart.CartScreen
 import com.github.kittinunf.aiqua_testing.ui.home.HomeScreen
+import com.github.kittinunf.aiqua_testing.ui.inbox.InboxSheet
 import com.github.kittinunf.aiqua_testing.ui.theme.GroceryTheme
 import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 import kotlinx.serialization.Serializable
@@ -98,7 +99,12 @@ fun GroceryApp(container: AppContainer) {
                     rememberViewModelStoreNavEntryDecorator(),
                 ),
                 entryProvider = entryProvider {
-                    entry<HomeRoute> { HomeScreen(viewModel { container.homeViewModel() }) }
+                    entry<HomeRoute> {
+                        HomeScreen(
+                            viewModel { container.homeViewModel() },
+                            inboxSheet = { onDismiss -> InboxSheet(viewModel { container.inboxViewModel() }, onDismiss) },
+                        )
+                    }
                     entry<CartRoute> {
                         CartScreen(
                             viewModel { container.cartViewModel() },

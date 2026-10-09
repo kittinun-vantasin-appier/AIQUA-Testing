@@ -53,14 +53,10 @@ class CartViewModel(
 
     /** The screen became visible. The UI calls this; a ViewModel can't tell on its own. */
     fun onScreenViewed() {
-        if (cartRepository.cart.value.unitCount > 0) {
-            eventLogger.screenViewed(
-                "cart",
-                mapOf("cart_unit_count" to cartRepository.cart.value.unitCount),
-            )
-        } else {
-            eventLogger.screenViewed("cart")
-        }
+        eventLogger.screenViewed(
+            "cart",
+            mapOf("cart_unit_count" to cartRepository.cart.value.unitCount),
+        )
     }
 
     fun onAddClick(product: Product) {

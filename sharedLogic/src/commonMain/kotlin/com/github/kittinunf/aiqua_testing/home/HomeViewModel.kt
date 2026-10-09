@@ -3,12 +3,15 @@ package com.github.kittinunf.aiqua_testing.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
+import com.github.kittinunf.aiqua_testing.badgeText
 import com.github.kittinunf.aiqua_testing.aiqua.cartAdded
 import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.github.kittinunf.aiqua_testing.cart.Cart
 import com.github.kittinunf.aiqua_testing.cart.CartRepository
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.catalog.formatPrice
+import com.github.kittinunf.aiqua_testing.inbox.InboxMessage
+import com.github.kittinunf.aiqua_testing.inbox.InboxRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,17 +23,19 @@ import kotlinx.coroutines.launch
 
 /**
  * Independent facts about Home that can be true at the same time, e.g. still showing [sections] while a refresh
- * [isLoading] or after it failed with [error].
+ * [isLoading] or after it failed with [error]. [inboxBadgeText] counts unread inbox messages; null means no badge.
  */
 data class HomeUiState(
     val isLoading: Boolean = false,
     val error: Throwable? = null,
     val sections: List<HomeSection> = emptyList(),
+    val inboxBadgeText: String? = null,
 )
 
 class HomeViewModel(
     private val homeRepository: HomeRepository,
     private val cartRepository: CartRepository,
+    private val inboxRepository: InboxRepository,
     private val eventLogger: EventLogger,
 ) : ViewModel() {
     // Loading and error change together, so they live in one flow and never show a half-updated state.
@@ -39,13 +44,14 @@ class HomeViewModel(
 
     @NativeCoroutinesState
     val uiState: StateFlow<HomeUiState> =
-        combine(homeRepository.products, cartRepository.cart, loadState, ::uiStateOf)
+        combine(homeRepository.products, cartRepository.cart, inboxRepository.messages, loadState, ::uiStateOf)
             .stateIn(
                 viewModelScope,
                 SharingStarted.Eagerly,
                 uiStateOf(
                     homeRepository.products.value,
                     cartRepository.cart.value,
+                    inboxRepository.messages.value,
                     loadState.value
                 ),
             )
@@ -86,10 +92,16 @@ class HomeViewModel(
 
     private data class LoadState(val isLoading: Boolean = false, val error: Throwable? = null)
 
-    private fun uiStateOf(products: List<Product>?, cart: Cart, loadState: LoadState) = HomeUiState(
+    private fun uiStateOf(
+        products: List<Product>?,
+        cart: Cart,
+        messages: List<InboxMessage>,
+        loadState: LoadState,
+    ) = HomeUiState(
         isLoading = loadState.isLoading,
         error = loadState.error,
         sections = products?.let { sections(it, cart) }.orEmpty(),
+        inboxBadgeText = badgeText(messages.count { !it.isRead }),
     )
 }
 

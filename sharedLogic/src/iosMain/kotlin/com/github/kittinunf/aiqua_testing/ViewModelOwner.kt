@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.github.kittinunf.aiqua_testing.cart.CartViewModel
 import com.github.kittinunf.aiqua_testing.home.HomeViewModel
+import com.github.kittinunf.aiqua_testing.inbox.InboxViewModel
 import kotlin.reflect.KClass
 
 /**
@@ -30,3 +31,6 @@ fun AppContainer.homeViewModelOwner(): ViewModelOwner<HomeViewModel> =
 
 fun AppContainer.cartViewModelOwner(): ViewModelOwner<CartViewModel> =
     ViewModelOwner(CartViewModel::class) { cartViewModel() }
+
+fun AppContainer.inboxViewModelOwner(): ViewModelOwner<InboxViewModel> =
+    ViewModelOwner(InboxViewModel::class) { inboxViewModel() }

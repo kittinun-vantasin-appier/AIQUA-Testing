@@ -11,6 +11,10 @@ import com.github.kittinunf.aiqua_testing.catalog.readProductJson
 import com.github.kittinunf.aiqua_testing.home.DefaultHomeRepository
 import com.github.kittinunf.aiqua_testing.home.HomeRepository
 import com.github.kittinunf.aiqua_testing.home.HomeViewModel
+import com.github.kittinunf.aiqua_testing.inbox.DefaultInboxRepository
+import com.github.kittinunf.aiqua_testing.inbox.InboxRepository
+import com.github.kittinunf.aiqua_testing.inbox.InboxService
+import com.github.kittinunf.aiqua_testing.inbox.InboxViewModel
 import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import com.github.kittinunf.aiqua_testing.order.OrderService
 
@@ -21,22 +25,27 @@ import com.github.kittinunf.aiqua_testing.order.OrderService
 class AppContainer(
     catalogService: CatalogService,
     orderService: OrderService,
+    inboxService: InboxService,
     private val eventLogger: EventLogger,
 ) {
 
-    /** The real app setup: the bundled Catalog, the fake order backend, and events sent to AIQUA. */
+    /** The real app setup: the bundled Catalog, the fake order backend, and AIQUA for the inbox and events. */
     constructor() : this(
         catalogService = JsonCatalogService(readJson = ::readProductJson),
         orderService = FakeOrderService(),
+        inboxService = Aiqua,
         eventLogger = Aiqua,
     )
 
     private val homeRepository: HomeRepository = DefaultHomeRepository(catalogService)
     private val cartRepository: CartRepository = DefaultCartRepository(orderService)
+    private val inboxRepository: InboxRepository = DefaultInboxRepository(inboxService)
 
-    fun mainViewModel() = MainViewModel(cartRepository)
+    fun mainViewModel() = MainViewModel(cartRepository, inboxRepository)
 
-    fun homeViewModel() = HomeViewModel(homeRepository, cartRepository, eventLogger)
+    fun homeViewModel() = HomeViewModel(homeRepository, cartRepository, inboxRepository, eventLogger)
 
     fun cartViewModel() = CartViewModel(cartRepository, eventLogger)
+
+    fun inboxViewModel() = InboxViewModel(inboxRepository, eventLogger)
 }

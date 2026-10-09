@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,15 +29,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.github.kittinunf.aiqua_testing.R
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.home.HomeUiState
 import com.github.kittinunf.aiqua_testing.home.HomeViewModel
@@ -41,29 +50,35 @@ import com.github.kittinunf.aiqua_testing.home.ProductRow
 import com.github.kittinunf.aiqua_testing.resources.MR
 import com.github.kittinunf.aiqua_testing.resources.home_error
 import com.github.kittinunf.aiqua_testing.resources.home_title
+import com.github.kittinunf.aiqua_testing.resources.inbox_title
 import com.github.kittinunf.aiqua_testing.resources.retry
 import com.github.kittinunf.aiqua_testing.ui.QuantityStepper
 import com.github.kittinunf.aiqua_testing.ui.theme.stringResource
 
 private const val COLUMNS = 3
 
+/** [inboxSheet] is shown over Home while the inbox is open; it calls its `onDismiss` when the Shopper closes it. */
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen(viewModel: HomeViewModel, inboxSheet: @Composable (onDismiss: () -> Unit) -> Unit) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    var isInboxOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) { viewModel.onScreenViewed() }
     HomeContent(
         state = state,
+        onInboxClick = { isInboxOpen = true },
         onRetry = viewModel::onRetryClick,
         onAdd = viewModel::onAddClick,
         onDecrement = viewModel::onDecrementClick,
         onRemove = viewModel::onRemoveClick,
     )
+    if (isInboxOpen) inboxSheet { isInboxOpen = false }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeContent(
     state: HomeUiState,
+    onInboxClick: () -> Unit,
     onRetry: () -> Unit,
     onAdd: (Product) -> Unit,
     onDecrement: (Product) -> Unit,
@@ -88,6 +103,7 @@ private fun HomeContent(
                         overflow = TextOverflow.Ellipsis,
                     )
                 },
+                actions = { InboxButton(state.inboxBadgeText, onInboxClick) },
                 expandedHeight = 100.dp,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface,
@@ -140,6 +156,15 @@ private fun HomeContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun InboxButton(badgeText: String?, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        BadgedBox(badge = { badgeText?.let { Badge { Text(it) } } }) {
+            Icon(painterResource(R.drawable.ic_mail), contentDescription = stringResource(MR.strings.inbox_title))
         }
     }
 }

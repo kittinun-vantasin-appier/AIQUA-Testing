@@ -26,4 +26,7 @@
     <string name="increase_quantity">Increase quantity</string>
     <string name="decrease_quantity">Decrease quantity</string>
     <string name="remove_from_cart">Remove from cart</string>
+
+    <string name="inbox_title">Inbox</string>
+    <string name="inbox_empty">No messages yet</string>
 </resources>

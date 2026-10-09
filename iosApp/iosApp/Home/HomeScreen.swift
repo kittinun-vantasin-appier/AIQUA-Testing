@@ -2,9 +2,12 @@ import SwiftUI
 import SharedLogic
 
 struct HomeScreen: View {
+    private let container: AppContainer
     @StateObject private var store: Store<HomeViewModel, HomeUiState>
+    @State private var isInboxPresented = false
 
     init(container: AppContainer) {
+        self.container = container
         _store = StateObject(wrappedValue: Store(
             container.homeViewModelOwner(),
             state: { $0.uiState },
@@ -18,8 +21,21 @@ struct HomeScreen: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(MR.colors.shared.surface)) // same page background as Android, incl. dark mode
                 .navigationTitle(Text(MR.strings.shared.home_title))
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { isInboxPresented = true } label: {
+                            InboxIcon(badgeText: store.state.inboxBadgeText)
+                        }
+                        .accessibilityLabel(Text(MR.strings.shared.inbox_title))
+                    }
+                }
         }
         .onAppear { store.viewModel.onScreenViewed() }
+        .sheet(isPresented: $isInboxPresented) {
+            InboxSheet(container: container)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 
     // Content wins: once there are sections, keep showing them whatever else is going on.
@@ -66,6 +82,26 @@ struct HomeScreen: View {
                 }
             }
         }
+    }
+}
+
+/// The envelope with an unread count, like the Cart tab badge.
+private struct InboxIcon: View {
+    let badgeText: String?
+
+    var body: some View {
+        Image(systemName: "envelope")
+            .overlay(alignment: .topTrailing) {
+                if let badgeText {
+                    Text(badgeText)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(Color(MR.colors.shared.on_error))
+                        .padding(.horizontal, 4)
+                        .frame(minWidth: 16, minHeight: 16)
+                        .background(Color(MR.colors.shared.error), in: Capsule())
+                        .offset(x: 8, y: -8)
+                }
+            }
     }
 }
 

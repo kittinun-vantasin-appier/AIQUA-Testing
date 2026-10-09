@@ -2,6 +2,8 @@ package com.github.kittinunf.aiqua_testing.home
 
 import com.github.kittinunf.aiqua_testing.cart.DefaultCartRepository
 import com.github.kittinunf.aiqua_testing.catalog.Product
+import com.github.kittinunf.aiqua_testing.inbox.DefaultInboxRepository
+import com.github.kittinunf.aiqua_testing.inbox.FakeInboxService
 import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,6 +23,7 @@ import kotlin.test.assertTrue
 @OptIn(ExperimentalCoroutinesApi::class)
 class HomeViewModelTest {
     private val carrot = Product("carrot", "Carrot", "vegetables", "🥕", 98)
+    private val noInbox = DefaultInboxRepository(FakeInboxService())
 
     @BeforeTest
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -38,7 +41,7 @@ class HomeViewModelTest {
                 products.value = listOf(carrot)
             }
         }
-        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), eventLogger = { _, _, _, _ -> })
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), noInbox, eventLogger = { _, _, _, _ -> })
 
         viewModel.uiState.value.let {
             assertFalse(it.isLoading)
@@ -64,7 +67,7 @@ class HomeViewModelTest {
             override val products = MutableStateFlow<List<Product>?>(listOf(carrot))
             override suspend fun refresh() = Unit
         }
-        val viewModel = HomeViewModel(repository, cartRepository) { name, parameters, value, currency ->
+        val viewModel = HomeViewModel(repository, cartRepository, noInbox) { name, parameters, value, currency ->
             assertEquals("cart_added", name)
             assertNull(value)
             assertNull(currency)
@@ -94,7 +97,7 @@ class HomeViewModelTest {
             override val products = MutableStateFlow<List<Product>?>(listOf(carrot))
             override suspend fun refresh() = Unit
         }
-        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService())) { name, parameters, _, _ ->
+        val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), noInbox) { name, parameters, _, _ ->
             logged += name to parameters
         }
 
