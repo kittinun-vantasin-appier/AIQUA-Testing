@@ -4,6 +4,7 @@ import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.order.Order
 import com.github.kittinunf.aiqua_testing.order.OrderFailedException
 import com.github.kittinunf.aiqua_testing.order.OrderService
+import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -33,6 +34,58 @@ class CartViewModelTest {
 
     @AfterTest
     fun tearDown() = Dispatchers.resetMain()
+
+    @Test
+    fun screenViewsIncludeCurrentCartCountIncludingEmptyCart() = runTest {
+        val repository = DefaultCartRepository(FakeOrderService())
+        val logged = mutableListOf<LoggedEvent>()
+        val viewModel = CartViewModel(repository, { name, parameters, value, currency ->
+            logged += LoggedEvent(name, parameters, value, currency)
+        })
+
+        viewModel.onScreenViewed()
+        repository.add(carrot)
+        repository.add(carrot)
+        viewModel.onScreenViewed()
+        repository.remove(carrot.id)
+        viewModel.onScreenViewed()
+
+        assertEquals(
+            listOf(0, 2, 0).map {
+                LoggedEvent("screen_viewed", mapOf("screen_name" to "cart", "cart_unit_count" to it))
+            },
+            logged,
+        )
+    }
+
+    @Test
+    fun cartAdditionsIncludeAllUnitsAndSkipQuantityLimitAndRemovals() = runTest {
+        val repository = DefaultCartRepository(FakeOrderService())
+        val milk = Product("milk", "Milk", "dairy & eggs", "milk", 228)
+        repository.add(milk)
+        val logged = mutableListOf<LoggedEvent>()
+        val viewModel = CartViewModel(repository, { name, parameters, value, currency ->
+            logged += LoggedEvent(name, parameters, value, currency)
+        })
+
+        repeat(10) { viewModel.onAddClick(carrot) }
+        viewModel.onDecrementClick(carrot)
+        viewModel.onRemoveClick(carrot)
+
+        assertEquals(9, logged.size)
+        assertEquals((2..10).toList(), logged.map { it.parameters["cart_unit_count"] })
+        assertEquals((1..9).toList(), logged.map { it.parameters["product_quantity"] })
+        assertEquals(
+            LoggedEvent(
+                "cart_added",
+                mapOf(
+                    "product_id" to "carrot", "product_name" to "Carrot", "category" to "vegetables",
+                    "price" to 98, "quantity" to 1, "product_quantity" to 1, "cart_unit_count" to 2,
+                ),
+            ),
+            logged.first(),
+        )
+    }
 
     @Test
     fun aFailedOrderKeepsTheCartAndARetryPlacesIt() = runTest {

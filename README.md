@@ -12,7 +12,8 @@ so Android and iOS always match. Every 5th Order fails on purpose, so `checkout_
 
 | Event | Parameters | Sent when |
 |---|---|---|
-| `screen_viewed` | `screen_name`: `home` / `cart` | A screen appears: app launch or a tab switch. On Android, rotating the screen sends it again. |
+| `screen_viewed` | `screen_name`: `home` / `cart`; `cart_unit_count` on cart views | A screen appears: app launch or a tab switch. On Android, rotating the screen sends it again. Cart count is the current total number of units, including zero. |
+| `cart_added` | `product_id`, `product_name`, `category`, `price` (one unit, yen), `quantity` (1), `product_quantity`, `cart_unit_count` | A successful addition from Home or Cart. Counts reflect the updated cart; no event when already at the quantity limit. No revenue value. |
 | `product_purchased` | `order_id`, `product_id`, `product_name`, `category`, `price` (one unit, yen), `quantity` | An Order was placed: one event per item, before `checkout_completed`. No value. |
 | `checkout_completed` | `order_id`, `product_count`, **valueToSum** = Order total, **valueToSumCurrency** = `JPY` (hardcoded as JPY for now :P) | An Order was placed. The only event with a value, so revenue is counted once. |
 | `checkout_failed` | `reason` (the error message) | Placing an Order failed. No value and no per-item events. |
@@ -20,6 +21,12 @@ so Android and iOS always match. Every 5th Order fails on purpose, so `checkout_
 Events sharing an `order_id` belong to the same Order. To see them, open the AIQUA dashboard, then Settings >
 Recent activity (Android / iOS tabs); they can take a few minutes to appear. How events are wired is in
 [docs/architecture.md](./docs/architecture.md#events).
+
+#### In-app campaign
+
+| State                | Android                                                                                                                           | iOS                                                                                                                        |
+|----------------------|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| In-app campaign cart | <img src="docs/screenshots/android/in-app-campaign_cart.png" width="240"> | <img src="docs/screenshots/ios/in-app-campaign_cart.png" width="240"> |
 
 ### Screenshots
 

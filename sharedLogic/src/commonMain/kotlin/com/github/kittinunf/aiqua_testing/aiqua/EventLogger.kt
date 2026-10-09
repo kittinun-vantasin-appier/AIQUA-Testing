@@ -1,6 +1,8 @@
 package com.github.kittinunf.aiqua_testing.aiqua
 
 import com.github.kittinunf.aiqua_testing.catalog.CURRENCY
+import com.github.kittinunf.aiqua_testing.catalog.Product
+import com.github.kittinunf.aiqua_testing.cart.Cart
 import com.github.kittinunf.aiqua_testing.order.Order
 
 /** Where ViewModels send analytics events. The app uses [Aiqua]; tests use a fake. */
@@ -15,8 +17,25 @@ fun interface EventLogger {
 // The events the app sends, so names and parameter keys live in one place.
 
 /** A screen became visible: the app opened on it, or the Shopper navigated to it. */
-internal fun EventLogger.screenViewed(screenName: String) =
-    logEvent("screen_viewed", mapOf("screen_name" to screenName), null, null)
+internal fun EventLogger.screenViewed(screenName: String, parameters: Map<String, Any> = emptyMap()) =
+    logEvent("screen_viewed", parameters + ("screen_name" to screenName), null, null)
+
+/** A unit was added successfully; counts describe the Cart after the addition. */
+internal fun EventLogger.cartAdded(product: Product, cart: Cart) =
+    logEvent(
+        "cart_added",
+        mapOf(
+            "product_id" to product.id,
+            "product_name" to product.name,
+            "category" to product.category,
+            "price" to product.price,
+            "quantity" to 1,
+            "product_quantity" to cart.quantityOf(product.id),
+            "cart_unit_count" to cart.unitCount,
+        ),
+        null,
+        null,
+    )
 
 /**
  * An Order was placed: one `product_purchased` per Cart Line (AIQUA's recommendation models learn from these),

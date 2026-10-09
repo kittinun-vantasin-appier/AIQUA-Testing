@@ -3,6 +3,7 @@ package com.github.kittinunf.aiqua_testing.cart
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
+import com.github.kittinunf.aiqua_testing.aiqua.cartAdded
 import com.github.kittinunf.aiqua_testing.aiqua.checkoutFailed
 import com.github.kittinunf.aiqua_testing.aiqua.orderPlaced
 import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
@@ -51,9 +52,23 @@ class CartViewModel(
         )
 
     /** The screen became visible. The UI calls this; a ViewModel can't tell on its own. */
-    fun onScreenViewed() = eventLogger.screenViewed("cart")
+    fun onScreenViewed() {
+        if (cartRepository.cart.value.unitCount > 0) {
+            eventLogger.screenViewed(
+                "cart",
+                mapOf("cart_unit_count" to cartRepository.cart.value.unitCount),
+            )
+        } else {
+            eventLogger.screenViewed("cart")
+        }
+    }
 
-    fun onAddClick(product: Product) = cartRepository.add(product)
+    fun onAddClick(product: Product) {
+        val previousCount = cartRepository.cart.value.unitCount
+        cartRepository.add(product)
+        val cart = cartRepository.cart.value
+        if (cart.unitCount > previousCount) eventLogger.cartAdded(product, cart)
+    }
 
     fun onDecrementClick(product: Product) = cartRepository.decrement(product.id)
 

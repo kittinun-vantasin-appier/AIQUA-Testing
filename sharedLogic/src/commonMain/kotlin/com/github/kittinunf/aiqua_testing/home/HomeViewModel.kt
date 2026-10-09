@@ -3,6 +3,7 @@ package com.github.kittinunf.aiqua_testing.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
+import com.github.kittinunf.aiqua_testing.aiqua.cartAdded
 import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.github.kittinunf.aiqua_testing.cart.Cart
 import com.github.kittinunf.aiqua_testing.cart.CartRepository
@@ -58,7 +59,12 @@ class HomeViewModel(
 
     fun onRetryClick() = load()
 
-    fun onAddClick(product: Product) = cartRepository.add(product)
+    fun onAddClick(product: Product) {
+        val previousCount = cartRepository.cart.value.unitCount
+        cartRepository.add(product)
+        val cart = cartRepository.cart.value
+        if (cart.unitCount > previousCount) eventLogger.cartAdded(product, cart)
+    }
 
     fun onDecrementClick(product: Product) = cartRepository.decrement(product.id)
 

@@ -57,6 +57,37 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun additionsLogUpdatedCountsButNotQuantityLimitOrRemovals() {
+        val logged = mutableListOf<Map<String, Any>>()
+        val cartRepository = DefaultCartRepository(FakeOrderService())
+        val repository = object : HomeRepository {
+            override val products = MutableStateFlow<List<Product>?>(listOf(carrot))
+            override suspend fun refresh() = Unit
+        }
+        val viewModel = HomeViewModel(repository, cartRepository) { name, parameters, value, currency ->
+            assertEquals("cart_added", name)
+            assertNull(value)
+            assertNull(currency)
+            logged += parameters
+        }
+
+        repeat(10) { viewModel.onAddClick(carrot) }
+        viewModel.onDecrementClick(carrot)
+        viewModel.onRemoveClick(carrot)
+
+        assertEquals(9, logged.size)
+        assertEquals((1..9).toList(), logged.map { it["cart_unit_count"] })
+        assertEquals((1..9).toList(), logged.map { it["product_quantity"] })
+        assertEquals(
+            mapOf<String, Any>(
+                "product_id" to "carrot", "product_name" to "Carrot", "category" to "vegetables",
+                "price" to 98, "quantity" to 1, "product_quantity" to 1, "cart_unit_count" to 1,
+            ),
+            logged.first(),
+        )
+    }
+
+    @Test
     fun aScreenViewLogsTheHomeScreen() {
         val logged = mutableListOf<Pair<String, Map<String, Any>>>()
         val repository = object : HomeRepository {
