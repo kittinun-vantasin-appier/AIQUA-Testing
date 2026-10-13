@@ -21,6 +21,8 @@ fun Aiqua.init(application: Application) {
 // The SDK keeps its single client itself; it only needs a Context to hand it back.
 private val qg: AppierQG get() = AppierQG.getInstance(AppContextProvider.appContext)
 
+internal actual val hostApp = "android"
+
 internal actual fun setNativeUserId(userId: String) = qg.setUserId(userId)
 
 internal actual fun setNativeCustomAttribute(key: String, value: String) =

@@ -22,15 +22,20 @@ class InboxViewModel(
     @NativeCoroutinesState
     val uiState: StateFlow<InboxUiState> = inboxRepository.messages
         .map(::InboxUiState)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, InboxUiState(inboxRepository.messages.value))
+        .stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            InboxUiState(inboxRepository.messages.value)
+        )
 
-    /**
-     * The screen became visible. The UI calls this; a ViewModel can't tell on its own. Opening the inbox shows every
-     * message, so each one counts as an impression. The SDK doesn't log those for inbox messages, so the app does.
-     */
     fun onScreenViewed() {
         eventLogger.screenViewed("inbox")
-        inboxRepository.messages.value.forEach { inboxRepository.logMessageEvent(it.id, MESSAGE_DISPLAYED) }
+        inboxRepository.messages.value.forEach {
+            inboxRepository.logMessageEvent(
+                it.id,
+                MESSAGE_DISPLAYED
+            )
+        }
     }
 
     fun onMessageClick(message: InboxMessage) {
