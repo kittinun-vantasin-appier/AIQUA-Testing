@@ -1,16 +1,13 @@
 import SwiftUI
+import KMPObservableViewModelSwiftUI
 import SharedLogic
 
 /// The inbox as a sheet over Home. Each opening creates it afresh, so each opening is a view.
 struct InboxSheet: View {
-    @StateObject private var store: Store<InboxViewModel, InboxUiState>
+    @StateViewModel private var viewModel: InboxViewModel
 
     init(container: AppContainer) {
-        _store = StateObject(wrappedValue: Store(
-            container.inboxViewModelOwner(),
-            state: { $0.uiState },
-            stateFlow: { $0.uiStateFlow }
-        ))
+        _viewModel = StateViewModel(wrappedValue: container.inboxViewModel())
     }
 
     var body: some View {
@@ -21,20 +18,20 @@ struct InboxSheet: View {
                 .navigationTitle(Text(MR.strings.shared.inbox_title))
                 .navigationBarTitleDisplayMode(.inline)
         }
-        .onAppear { store.viewModel.onScreenViewed() }
+        .onAppear { viewModel.onScreenViewed() }
     }
 
     @ViewBuilder
     private var content: some View {
-        if store.state.isEmpty {
+        if viewModel.uiState.isEmpty {
             Text(MR.strings.shared.inbox_empty)
                 .foregroundStyle(Color(MR.colors.shared.on_surface_variant))
         } else {
             // Space, not separators, separates messages: 12pt inside each row plus 8pt between rows (as on Android).
             ScrollView {
                 LazyVStack(spacing: 8) {
-                    ForEach(store.state.messages, id: \.id) { message in
-                        Button { store.viewModel.onMessageClick(message: message) } label: {
+                    ForEach(viewModel.uiState.messages, id: \.id) { message in
+                        Button { viewModel.onMessageClick(message: message) } label: {
                             MessageRow(message: message)
                         }
                         .buttonStyle(.plain)

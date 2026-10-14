@@ -26,7 +26,7 @@ How data moves through the app. For the domain vocabulary (Catalog, Cart, Cart L
   │                                                          attempt fails)        │
   └────────────────────────────────────────────────────────────────────────────────┘
         arrows = "uses"; state comes back up as StateFlows
-        Android observes with collectAsStateWithLifecycle(), iOS with asyncSequence(for: …Flow)
+        Android observes with collectAsStateWithLifecycle(), iOS with @StateViewModel (KMP-ObservableViewModel)
 ```
 
 **Rule 1: data flows one way.** The UI never calculates anything. It renders a `UiState` and reports taps back as
@@ -89,6 +89,13 @@ Every `UiState` is a data class of independent fields rather than a sealed one-o
 such as "showing sections while refreshing" or "showing sections after a failed refresh" can be expressed. On Home,
 both UIs follow one rule: **content wins.** If there are sections, show them; otherwise show the spinner while
 loading, or the error with Retry.
+
+Every ViewModel builds its `uiState` with `stateIn(viewModelScope, WhileUiSubscribed, …)` (`UiStateSharing.kt`): the
+upstream flows run while a screen observes it and stop 5 seconds after the last one leaves, so an Android
+configuration change doesn't restart them. On iOS, a SwiftUI view holding the ViewModel with `@StateViewModel` counts
+as a subscriber ([ADR-0005](./adr/0005-swiftui-observes-viewmodels-with-kmp-observableviewmodel.md)). The catch is
+that `uiState.value` is only kept current while something observes it, so ViewModel tests collect `uiState` in
+`backgroundScope` before reading it.
 
 ## Buying, step by step
 
@@ -166,9 +173,9 @@ looked up by ID on every call instead of kept, so it stays stateless.
 | | Android | iOS |
 |---|---|---|
 | Container created once | `GroceryApplication` | `iOSApp` |
-| ViewModel lifetime | Navigation 3 back stack entry (`rememberViewModelStoreNavEntryDecorator`); `MainViewModel` lives with the Activity | `ViewModelOwner`, cleared in `Store.deinit` |
-| Observing state | `collectAsStateWithLifecycle()` | `Store` loops over `asyncSequence(for: uiStateFlow)` for its whole lifetime (KMP-NativeCoroutines) |
-| Cart tab badge | `MainViewModel.uiState` | `MainViewModel.uiStateFlow` |
+| ViewModel lifetime | Navigation 3 back stack entry (`rememberViewModelStoreNavEntryDecorator`); `MainViewModel` lives with the Activity | `@StateViewModel` on the screen; KMP-ObservableViewModel clears it once SwiftUI releases it (per its docs) |
+| Observing state | `collectAsStateWithLifecycle()` | Reads `viewModel.uiState` directly; SwiftUI re-renders through `Observable` ([ADR-0005](./adr/0005-swiftui-observes-viewmodels-with-kmp-observableviewmodel.md)) |
+| Cart tab badge | `MainViewModel.uiState` | `MainViewModel.uiState` |
 | Navigation | One back stack: `[Home]` or `[Home, Cart]` | `TabView` (both tabs stay alive) |
 
 ## Known gaps

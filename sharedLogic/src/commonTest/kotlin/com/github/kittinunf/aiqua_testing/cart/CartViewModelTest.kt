@@ -8,7 +8,9 @@ import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runCurrent
@@ -110,6 +112,7 @@ class CartViewModelTest {
                 )
             },
         )
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} } // WhileUiSubscribed: keep uiState current
         cartRepository.add(carrot)
         runCurrent()
 

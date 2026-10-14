@@ -1,7 +1,6 @@
 package com.github.kittinunf.aiqua_testing.home
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.github.kittinunf.aiqua_testing.WhileUiSubscribed
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
 import com.github.kittinunf.aiqua_testing.badgeText
 import com.github.kittinunf.aiqua_testing.aiqua.cartAdded
@@ -13,12 +12,13 @@ import com.github.kittinunf.aiqua_testing.catalog.formatPrice
 import com.github.kittinunf.aiqua_testing.inbox.InboxMessage
 import com.github.kittinunf.aiqua_testing.inbox.InboxRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import com.rickclephas.kmp.observableviewmodel.ViewModel
+import com.rickclephas.kmp.observableviewmodel.coroutineScope
+import com.rickclephas.kmp.observableviewmodel.stateIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /**
@@ -47,7 +47,7 @@ class HomeViewModel(
         combine(homeRepository.products, cartRepository.cart, inboxRepository.messages, loadState, ::uiStateOf)
             .stateIn(
                 viewModelScope,
-                SharingStarted.Eagerly,
+                WhileUiSubscribed,
                 uiStateOf(
                     homeRepository.products.value,
                     cartRepository.cart.value,
@@ -78,7 +78,7 @@ class HomeViewModel(
 
     private fun load() {
         loadState.value = LoadState(isLoading = true)
-        viewModelScope.launch {
+        viewModelScope.coroutineScope.launch {
             loadState.value = try {
                 homeRepository.refresh()
                 LoadState()

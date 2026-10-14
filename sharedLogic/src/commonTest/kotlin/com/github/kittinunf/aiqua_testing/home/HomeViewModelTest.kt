@@ -8,8 +8,10 @@ import com.github.kittinunf.aiqua_testing.order.FakeOrderService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
@@ -32,7 +34,7 @@ class HomeViewModelTest {
     fun tearDown() = Dispatchers.resetMain()
 
     @Test
-    fun aFailedLoadShowsTheErrorAndRetryRecovers() {
+    fun aFailedLoadShowsTheErrorAndRetryRecovers() = runTest {
         var online = false
         val repository = object : HomeRepository {
             override val products = MutableStateFlow<List<Product>?>(null)
@@ -42,6 +44,7 @@ class HomeViewModelTest {
             }
         }
         val viewModel = HomeViewModel(repository, DefaultCartRepository(FakeOrderService()), noInbox, eventLogger = { _, _, _, _ -> })
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} } // WhileUiSubscribed: keep uiState current
 
         viewModel.uiState.value.let {
             assertFalse(it.isLoading)

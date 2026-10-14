@@ -1,5 +1,5 @@
 {
-  "originHash" : "85282a55e4e26c16899e2979f99b04bf6fddceedbd3c87db047fb857d7a1ebda",
+  "originHash" : "bc9be3744e191c32219e46990ccda121f16fe95aae8552639d8babb4cc5d94e4",
   "pins" : [
     {
       "identity" : "appier-ios-framework",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "kmp-nativecoroutines",
+      "identity" : "kmp-observableviewmodel",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/rickclephas/KMP-NativeCoroutines.git",
+      "location" : "https://github.com/rickclephas/KMP-ObservableViewModel.git",
       "state" : {
-        "revision" : "25d8cefda2389ad82cd9751750fc840961355214",
-        "version" : "1.0.6-spm-async"
+        "revision" : "9c73fbf9c879131715fd71e9e243a4ba10fd53a3",
+        "version" : "1.1.0"
       }
     }
   ],
