@@ -1,18 +1,15 @@
 import SwiftUI
+import KMPObservableViewModelSwiftUI
 import SharedLogic
 
 struct HomeScreen: View {
     private let container: AppContainer
-    @StateObject private var store: Store<HomeViewModel, HomeUiState>
+    @StateViewModel private var viewModel: HomeViewModel
     @State private var isInboxPresented = false
 
     init(container: AppContainer) {
         self.container = container
-        _store = StateObject(wrappedValue: Store(
-            container.homeViewModelOwner(),
-            state: { $0.uiState },
-            stateFlow: { $0.uiStateFlow }
-        ))
+        _viewModel = StateViewModel(wrappedValue: container.homeViewModel())
     }
 
     var body: some View {
@@ -24,13 +21,13 @@ struct HomeScreen: View {
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button { isInboxPresented = true } label: {
-                            InboxIcon(badgeText: store.state.inboxBadgeText)
+                            InboxIcon(badgeText: viewModel.uiState.inboxBadgeText)
                         }
                         .accessibilityLabel(Text(MR.strings.shared.inbox_title))
                     }
                 }
         }
-        .onAppear { store.viewModel.onScreenViewed() }
+        .onAppear { viewModel.onScreenViewed() }
         .sheet(isPresented: $isInboxPresented) {
             InboxSheet(container: container)
                 .presentationDetents([.medium, .large])
@@ -41,13 +38,13 @@ struct HomeScreen: View {
     // Content wins: once there are sections, keep showing them whatever else is going on.
     @ViewBuilder
     private var content: some View {
-        let state = store.state
+        let state = viewModel.uiState
         if state.sections.isEmpty && state.isLoading {
             ProgressView().controlSize(.large).tint(Color(MR.colors.shared.primary))
         } else if state.sections.isEmpty && state.error != nil {
             VStack(spacing: 16) {
                 Text(MR.strings.shared.home_error)
-                Button { store.viewModel.onRetryClick() } label: { Text(MR.strings.shared.retry) }
+                Button { viewModel.onRetryClick() } label: { Text(MR.strings.shared.retry) }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.capsule)
                     .tint(Color(MR.colors.shared.primary))
@@ -69,9 +66,9 @@ struct HomeScreen: View {
                             ForEach(section.rows, id: \.product.id) { row in
                                 ProductCard(
                                     row: row,
-                                    onAdd: { store.viewModel.onAddClick(product: row.product) },
-                                    onDecrement: { store.viewModel.onDecrementClick(product: row.product) },
-                                    onRemove: { store.viewModel.onRemoveClick(product: row.product) }
+                                    onAdd: { viewModel.onAddClick(product: row.product) },
+                                    onDecrement: { viewModel.onDecrementClick(product: row.product) },
+                                    onRemove: { viewModel.onRemoveClick(product: row.product) }
                                 )
                             }
                         }

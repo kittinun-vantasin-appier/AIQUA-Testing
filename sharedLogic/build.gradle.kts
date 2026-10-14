@@ -65,9 +65,12 @@ kotlin {
         all {
             // Required by KMP-NativeCoroutines for the Swift-facing names it generates.
             languageSettings.optIn("kotlin.experimental.ExperimentalObjCName")
+            // Required by KMP-ObservableViewModel, which makes the shared ViewModels observable from SwiftUI.
+            languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
         }
         commonMain.dependencies {
             api(libs.androidx.lifecycle.viewmodel)
+            api(libs.kmp.observableviewmodel.core)
             api(libs.kotlinx.coroutines.core)
             api(libs.moko.resources)
             implementation(libs.kotlinx.serialization.json)
