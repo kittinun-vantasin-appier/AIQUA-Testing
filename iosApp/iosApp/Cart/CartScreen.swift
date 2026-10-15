@@ -1,23 +1,20 @@
 import SwiftUI
+import KMPObservableViewModelSwiftUI
 import SharedLogic
 
 struct CartScreen: View {
-    @StateObject private var store: Store<CartViewModel, CartUiState>
+    @StateViewModel private var viewModel: CartViewModel
     let onStartShopping: () -> Void
 
     init(container: AppContainer, onStartShopping: @escaping () -> Void) {
-        _store = StateObject(wrappedValue: Store(
-            container.cartViewModelOwner(),
-            state: { $0.uiState },
-            stateFlow: { $0.uiStateFlow }
-        ))
+        _viewModel = StateViewModel(wrappedValue: container.cartViewModel())
         self.onStartShopping = onStartShopping
     }
 	
     var body: some View {
         NavigationStack {
             Group {
-                if store.state.isEmpty {
+                if viewModel.uiState.isEmpty {
                     EmptyCart(onStartShopping: onStartShopping)
                 } else {
                     lines
@@ -27,14 +24,14 @@ struct CartScreen: View {
             .background(Color(MR.colors.shared.surface)) // same page background as Android, incl. dark mode
             .navigationTitle(Text(MR.strings.shared.cart_title))
             .safeAreaInset(edge: .bottom) {
-                if !store.state.isEmpty {
-                    CheckoutBar(totalText: store.state.totalText) { store.viewModel.onBuyClick() }
+                if !viewModel.uiState.isEmpty {
+                    CheckoutBar(totalText: viewModel.uiState.totalText) { viewModel.onBuyClick() }
                 }
             }
         }
-        .onAppear { store.viewModel.onScreenViewed() }
+        .onAppear { viewModel.onScreenViewed() }
         // Covers the whole app, tab bar included; it fades in and out as the state says.
-        .fadingCover(item: store.state.isOrderOverlayVisible ? store.state : nil) { state in
+        .fadingCover(item: viewModel.uiState.isOrderOverlayVisible ? viewModel.uiState : nil) { state in
             OrderOverlayView(state: state)
         }
     }
@@ -42,12 +39,12 @@ struct CartScreen: View {
     private var lines: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(store.state.lines, id: \.product.id) { line in
+                ForEach(viewModel.uiState.lines, id: \.product.id) { line in
                     CartLineItem(
                         line: line,
-                        onAdd: { store.viewModel.onAddClick(product: line.product) },
-                        onDecrement: { store.viewModel.onDecrementClick(product: line.product) },
-                        onRemove: { store.viewModel.onRemoveClick(product: line.product) }
+                        onAdd: { viewModel.onAddClick(product: line.product) },
+                        onDecrement: { viewModel.onDecrementClick(product: line.product) },
+                        onRemove: { viewModel.onRemoveClick(product: line.product) }
                     )
                 }
             }

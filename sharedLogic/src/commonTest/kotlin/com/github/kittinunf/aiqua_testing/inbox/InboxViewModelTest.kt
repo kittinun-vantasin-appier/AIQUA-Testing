@@ -2,6 +2,7 @@ package com.github.kittinunf.aiqua_testing.inbox
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -28,6 +29,7 @@ class InboxViewModelTest {
         val repository = DefaultInboxRepository(service).apply { refresh() }
         val screens = mutableListOf<Any?>()
         val viewModel = InboxViewModel(repository) { _, parameters, _, _ -> screens += parameters["screen_name"] }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} } // WhileUiSubscribed: keep uiState current
 
         viewModel.onScreenViewed()
 
@@ -41,6 +43,7 @@ class InboxViewModelTest {
         val service = FakeInboxService(newer)
         val repository = DefaultInboxRepository(service).apply { refresh() }
         val viewModel = InboxViewModel(repository) { _, _, _, _ -> }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} } // WhileUiSubscribed: keep uiState current
 
         viewModel.onMessageClick(newer)
         viewModel.onMessageClick(viewModel.uiState.value.messages.single())

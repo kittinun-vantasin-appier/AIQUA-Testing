@@ -1,14 +1,13 @@
 package com.github.kittinunf.aiqua_testing.inbox
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.github.kittinunf.aiqua_testing.WhileUiSubscribed
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
 import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.SharingStarted
+import com.rickclephas.kmp.observableviewmodel.ViewModel
+import com.rickclephas.kmp.observableviewmodel.stateIn
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 
 /** The inbox messages, newest first. Read ones stay; nothing is ever deleted. */
 data class InboxUiState(val messages: List<InboxMessage> = emptyList()) {
@@ -22,11 +21,7 @@ class InboxViewModel(
     @NativeCoroutinesState
     val uiState: StateFlow<InboxUiState> = inboxRepository.messages
         .map(::InboxUiState)
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            InboxUiState(inboxRepository.messages.value)
-        )
+        .stateIn(viewModelScope, WhileUiSubscribed, InboxUiState(inboxRepository.messages.value))
 
     fun onScreenViewed() {
         eventLogger.screenViewed("inbox")
