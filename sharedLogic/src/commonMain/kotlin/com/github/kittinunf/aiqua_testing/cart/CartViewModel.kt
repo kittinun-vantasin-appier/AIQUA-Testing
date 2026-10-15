@@ -1,7 +1,6 @@
 package com.github.kittinunf.aiqua_testing.cart
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.github.kittinunf.aiqua_testing.WhileUiSubscribed
 import com.github.kittinunf.aiqua_testing.aiqua.EventLogger
 import com.github.kittinunf.aiqua_testing.aiqua.cartAdded
 import com.github.kittinunf.aiqua_testing.aiqua.checkoutFailed
@@ -10,13 +9,14 @@ import com.github.kittinunf.aiqua_testing.aiqua.screenViewed
 import com.github.kittinunf.aiqua_testing.catalog.Product
 import com.github.kittinunf.aiqua_testing.catalog.formatPrice
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
+import com.rickclephas.kmp.observableviewmodel.ViewModel
+import com.rickclephas.kmp.observableviewmodel.coroutineScope
+import com.rickclephas.kmp.observableviewmodel.stateIn
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -47,7 +47,7 @@ class CartViewModel(
     val uiState: StateFlow<CartUiState> = combine(cartRepository.cart, orderState, ::uiStateOf)
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
+            WhileUiSubscribed,
             uiStateOf(cartRepository.cart.value, orderState.value)
         )
 
@@ -71,9 +71,10 @@ class CartViewModel(
     fun onRemoveClick(product: Product) = cartRepository.remove(product.id)
 
     fun onBuyClick() {
+        // uiState is current here because the Cart screen is observing it whenever Buy can be tapped (WhileUiSubscribed).
         if (uiState.value.isEmpty || uiState.value.isOrderOverlayVisible) return
         orderState.value = OrderState(isPlacing = true)
-        viewModelScope.launch {
+        viewModelScope.coroutineScope.launch {
             orderState.value = try {
                 val order = cartRepository.checkout()
                 eventLogger.orderPlaced(order)

@@ -1,4 +1,5 @@
 import SwiftUI
+import KMPObservableViewModelSwiftUI
 import SharedLogic
 
 @main
@@ -23,15 +24,11 @@ struct AppView: View {
     private enum Tab { case home, cart }
 
     @State private var tab = Tab.home
-    @StateObject private var store: Store<MainViewModel, MainUiState>
+    @StateViewModel private var viewModel: MainViewModel
 
     init(container: AppContainer) {
         self.container = container
-        _store = StateObject(wrappedValue: Store(
-            container.mainViewModelOwner(),
-            state: { $0.uiState },
-            stateFlow: { $0.uiStateFlow }
-        ))
+        _viewModel = StateViewModel(wrappedValue: container.mainViewModel())
     }
 
     var body: some View {
@@ -41,7 +38,7 @@ struct AppView: View {
                 .tag(Tab.home)
             CartScreen(container: container, onStartShopping: { tab = .home })
                 .tabItem { Label { Text(MR.strings.shared.tab_cart) } icon: { Image(systemName: "cart.fill") } }
-                .badge(store.state.cartBadgeText.map { Text($0) })
+                .badge(viewModel.uiState.cartBadgeText.map { Text($0) })
                 .tag(Tab.cart)
         }
         .tint(Color(MR.colors.shared.primary))

@@ -1,14 +1,13 @@
 package com.github.kittinunf.aiqua_testing
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.github.kittinunf.aiqua_testing.cart.CartRepository
 import com.github.kittinunf.aiqua_testing.inbox.InboxRepository
 import com.rickclephas.kmp.nativecoroutines.NativeCoroutinesState
-import kotlinx.coroutines.flow.SharingStarted
+import com.rickclephas.kmp.observableviewmodel.ViewModel
+import com.rickclephas.kmp.observableviewmodel.coroutineScope
+import com.rickclephas.kmp.observableviewmodel.stateIn
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 /** What the app's top level (the tabs) shows, outside any one screen. [cartBadgeText] is null when there's no badge. */
@@ -19,11 +18,11 @@ class MainViewModel(cartRepository: CartRepository, inboxRepository: InboxReposi
     @NativeCoroutinesState
     val uiState: StateFlow<MainUiState> = cartRepository.cart
         .map { MainUiState(cartBadgeText = badgeText(it.unitCount)) }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, MainUiState(badgeText(cartRepository.cart.value.unitCount)))
+        .stateIn(viewModelScope, WhileUiSubscribed, MainUiState(badgeText(cartRepository.cart.value.unitCount)))
 
     init {
         // Inbox messages are fetched once per launch.
-        viewModelScope.launch { inboxRepository.refresh() }
+        viewModelScope.coroutineScope.launch { inboxRepository.refresh() }
     }
 }
 
