@@ -6,6 +6,10 @@ So the core logic (Service, Repository, ViewModel) can be shared across iOS & An
 logging, etc. However, the UI stays native with Compose (Android) and SwiftUI (iOS) to be closer to
 the UI for each platform.
 
+The same app is also built in React Native ([/reactNativeApp](./reactNativeApp)) to test AIQUA's React Native SDK the
+way a React Native customer would integrate it. It has its own TypeScript logic and shares only the Catalog
+(`product.json`) with the native apps ([ADR-0005](./docs/adr/0005-react-native-host-app.md)).
+
 The architecture of the app is documented at [docs/architecture.md](./docs/architecture.md) and for
 how data flows through the app, and [docs/adr](./docs/adr) for key decisions for all technical
 decisions in building the app.
@@ -14,7 +18,13 @@ decisions in building the app.
 
 These are the events the app sends to AIQUA. Both apps send the same events from the shared
 ViewModels (`sharedLogic`), so Android and iOS always match. Every 5th Order fails on purpose, so
-`checkout_failed` is easy to trigger.
+`checkout_failed` is easy to trigger. The React Native app sends the same events, except the inbox ones
+(`screen_name` `inbox`, `qg_inapp_displayed`, `qg_inapp_clicked`): AIQUA's React Native SDK has no inbox.
+
+Every event the apps log themselves (all except `qg_inapp_*`) also carries **`host`**: `android`, `ios` or
+`react_native`, the app that sent it, because the dashboard only splits activity by Android and iOS
+([ADR-0006](./docs/adr/0006-host-event-parameter.md)). The SDK also logs `qg_inapp_displayed` / `qg_inapp_closed` on
+its own for popup campaigns, in every app, without `host`.
 
 | Event                | Parameters                                                                                                               | Sent when                                                                                                                                                      |
 |----------------------|--------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -84,6 +94,9 @@ commands and options:
 
 - Android app: `./gradlew :androidApp:assembleDebug`
 - iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- React Native app, from [/reactNativeApp](./reactNativeApp) (needs Node and CocoaPods): `npm install`, then
+  `cd ios && bundle install && bundle exec pod install`, then `npx react-native start` and, in another terminal,
+  `npx react-native run-android` or `npx react-native run-ios`. Tests: `npx jest`.
 
 ---
 

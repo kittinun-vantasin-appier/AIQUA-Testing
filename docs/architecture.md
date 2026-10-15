@@ -137,6 +137,11 @@ It keeps no state: the SDK holds its own single client, which `Aiqua` asks for w
 `Aiqua.init(application = this)` in `GroceryApplication.onCreate`, `Aiqua.shared.configure()` in the iOS `App`'s `init`
 (`init` is reserved in Swift). The app ID is `Constants.APP_ID`.
 
+Right after starting the SDK, `init` calls `setUserAttributes()`: a fixed user ID and a `platform` profile attribute
+("Android 37" / "iOS 26.0"). The React Native app sets the same user ID, so all Host Apps share
+one AIQUA profile; that's why `platform` only says which app launched last, and events carry `host` instead
+([ADR-0006](./adr/0006-host-event-parameter.md)).
+
 | | Android | iOS |
 |---|---|---|
 | SDK | `com.appier:appier-android` as a `sharedLogic` androidMain dependency | `AppierFramework` (Swift Package Manager) linked by the iOS app |
@@ -152,7 +157,8 @@ The events the app sends, and when, are listed in the [README](../README.md#aiqu
 ([ADR-0004](./adr/0004-analytics-events-come-from-viewmodels.md)) through `EventLogger`, a one-method interface
 mirroring the SDK, `logEvent(name, parameters, valueToSum, valueToSumCurrency)`. `Aiqua` implements it and
 `AppContainer()` passes it to the ViewModels; tests use a fake. Event names and parameter keys live in `EventLogger.kt`,
-and the currency is `CURRENCY` (`JPY`) next to `formatPrice`.
+and the currency is `CURRENCY` (`JPY`) next to `formatPrice`. `Aiqua.logEvent` adds `host` (`android` / `ios`,
+`hostApp` per platform) to every event on its way to the SDK, so the ViewModels and their tests don't deal with it.
 
 ### Inbox
 
@@ -178,7 +184,35 @@ looked up by ID on every call instead of kept, so it stays stateless.
 | Cart tab badge | `MainViewModel.uiState` | `MainViewModel.uiState` |
 | Navigation | One back stack: `[Home]` or `[Home, Cart]` | `TabView` (both tabs stay alive) |
 
+## React Native app
+
+`reactNativeApp/` is the same grocery app in React Native 0.87 (TypeScript), integrating `@appier/react-native-sdk`
+([ADR-0005](./adr/0005-react-native-host-app.md)). It's deliberately small, with the same layers as `sharedLogic` in a
+handful of files under `src/`:
+
+| | File | Role |
+|---|---|---|
+| Services + Repositories | `catalog.ts`, `cart.ts` | `fetchProducts()` and the fake Order service (every 5th attempt fails); `createHomeRepository` / `createCartRepository` own state in a tiny `Store` (`store.ts`) |
+| ViewModels | `viewModels.ts` | `useMainViewModel` / `useHomeViewModel` / `useCartViewModel`: Repository state in, a UiState of independent fields out, events sent here |
+| SDK | `aiqua.ts` | `startAiqua()` and the events, same names and parameters as `EventLogger.kt`, plus `host = react_native` |
+| UI | `App.tsx`, `HomeScreen.tsx`, `CartScreen.tsx` | Two hand-made tabs (no navigation library); only the selected one is mounted, so mounting is "screen viewed" |
+
+`product.json` is read from `sharedLogic` through Metro's `watchFolders`; text and colours are copied into `ui.ts`.
+Things the React Native SDK needs that the native ones don't:
+
+- **Android:** `Appier.create(this)` in `MainApplication.onCreate`, before JS calls `configure()`.
+- **iOS:** `configure()` rejects a missing `appGroup` although it's typed optional, so the app passes `''`.
+- **Both:** events logged before `configure()` resolves are dropped silently, so `aiqua.ts` holds every event until it
+  has.
+- **iOS 27** terminates apps that don't use the UIScene life cycle, which the React Native 0.87 template doesn't, so
+  `AppDelegate.swift` adds a `SceneDelegate` (and `Info.plist` a scene manifest).
+
 ## Known gaps
 
 - **The Cart is in memory only.** Killing the app empties it. This is by design for now.
 - **The failure counter resets with the app.** The 5th attempt fails in each app run, not across runs.
+- **The React Native app has no Inbox.** AIQUA's React Native SDK has no inbox support (no fetching, read status or
+  message events), so only the native apps show the envelope and send the inbox's `qg_inapp_displayed` /
+  `qg_inapp_clicked`. Popup campaigns work in all apps.
+- **The React Native app runs an older iOS SDK.** `@appier/react-native-sdk` pins `AppierFramework` to an exact version
+  (8.11.2 in 2.3.1), behind the native iOS app's 8.11.3. We don't downgrade native to match.

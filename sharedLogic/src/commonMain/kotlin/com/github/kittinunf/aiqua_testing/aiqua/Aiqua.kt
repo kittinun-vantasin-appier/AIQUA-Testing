@@ -25,7 +25,7 @@ object Aiqua : EventLogger, InboxService {
         parameters: Map<String, Any>,
         valueToSum: Double?,
         valueToSumCurrency: String?
-    ) = logNativeEvent(name, parameters, valueToSum, valueToSumCurrency)
+    ) = logNativeEvent(name, parameters + ("host" to hostApp), valueToSum, valueToSumCurrency)
 
     @NativeCoroutinesIgnore
     override suspend fun fetchMessages(): List<InboxMessage> {
@@ -50,6 +50,9 @@ object Aiqua : EventLogger, InboxService {
 
 // What the two SDKs do differently: method names and signatures, field types (an inbox message's ID is a String vs an
 // NSNumber), and the read-status enum. Each is a one-line SDK call per platform.
+
+/** Which Host App sends the events, so AIQUA can tell them apart from the React Native app's: `android` or `ios`. */
+internal expect val hostApp: String
 
 internal expect fun setNativeUserId(userId: String)
 

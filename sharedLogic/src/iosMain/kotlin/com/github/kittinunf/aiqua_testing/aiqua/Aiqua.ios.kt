@@ -15,6 +15,8 @@ fun Aiqua.init() {
     setUserAttributes()
 }
 
+internal actual val hostApp = "ios"
+
 internal actual fun setNativeUserId(userId: String) = QGSdk.getSharedInstance().setUserId(userId)
 
 internal actual fun setNativeCustomAttribute(key: String, value: String) =

@@ -1,8 +1,14 @@
 # AIQUA Testing Grocery Shop
 
-A small grocery shopping app for Android and iOS. A Shopper browses a Catalog of Products, adds them to a Cart and places an Order. The app exists as a realistic host for testing the AIQUA SDK.
+A small grocery shopping app, with multiple Host Apps. A Shopper browses a Catalog of Products, adds them to a Cart and places an Order. The app exists as a black-box testing / realistic host for testing the AIQUA SDK.
 
 ## Language
+
+### Testing
+
+**Host App**:
+One way of building the grocery app that a real AIQUA customer might use: the Android app, the iOS app, or the React Native app (which itself runs on Android and iOS). Every Host App has the same Catalog, Cart and Orders and sends the same events, so they can be compared against each other.
+_Avoid_: Client, flavour, variant, platform
 
 ### Catalog
 
